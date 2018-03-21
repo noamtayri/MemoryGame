@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                         correct();
                     }
                     else{
-                        firstChoiseBtn.setBackgroundColor(Color.WHITE);
+                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
                         firstChoiseBtn = null;
                     }
                 }
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                         correct();
                     }
                     else{
-                        firstChoiseBtn.setBackgroundColor(Color.WHITE);
+                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
                         firstChoiseBtn = null;
                     }
                 }
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                         correct();
                     }
                     else{
-                        firstChoiseBtn.setBackgroundColor(Color.WHITE);
+                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
                         firstChoiseBtn = null;
                     }
                 }
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                         correct();
                     }
                     else{
-                        firstChoiseBtn.setBackgroundColor(Color.WHITE);
+                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
                         firstChoiseBtn = null;
                     }
                 }
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                         correct();
                     }
                     else{
-                        firstChoiseBtn.setBackgroundColor(Color.WHITE);
+                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
                         firstChoiseBtn = null;
                     }
                 }
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                         correct();
                     }
                     else{
-                        firstChoiseBtn.setBackgroundColor(Color.WHITE);
+                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
                         firstChoiseBtn = null;
                     }
                 }
@@ -195,12 +195,12 @@ public class MainActivity extends AppCompatActivity {
     private void correct(){
         firstChoiseBtn = null;
         corrects += 1;
-        isrBtn1.setBackgroundColor(Color.WHITE);
-        isrBtn2.setBackgroundColor(Color.WHITE);
-        usaBtn1.setBackgroundColor(Color.WHITE);
-        usaBtn2.setBackgroundColor(Color.WHITE);
-        argBtn1.setBackgroundColor(Color.WHITE);
-        argBtn2.setBackgroundColor(Color.WHITE);
+        isrBtn1.setBackgroundColor(0xFAFAFA);
+        isrBtn2.setBackgroundColor(0xFAFAFA);
+        usaBtn1.setBackgroundColor(0xFAFAFA);
+        usaBtn2.setBackgroundColor(0xFAFAFA);
+        argBtn1.setBackgroundColor(0xFAFAFA);
+        argBtn2.setBackgroundColor(0xFAFAFA);
         if(corrects == 3){
             isrBtn1.setImageResource(R.drawable.israel_flag_icon);
             isrBtn1.setTag(false);
