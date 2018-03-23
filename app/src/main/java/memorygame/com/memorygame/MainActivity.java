@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void imageBtnClicked(ImageButton pressedBtn, ImageButton matchBtn){
-        if(pressedBtn.getTag().equals(true))
+        if(!pressedBtn.isEnabled())
             return;
         if(firstChoiseBtn == null){
             firstChoiseBtn = pressedBtn;
@@ -81,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
         else{
             if(firstChoiseBtn == matchBtn){
                 matchBtn.setImageResource(R.drawable.star);
-                matchBtn.setTag(true);
+                matchBtn.setEnabled(false);
                 pressedBtn.setImageResource(R.drawable.star);
-                pressedBtn.setTag(true);
+                pressedBtn.setEnabled(false);
                 correct();
             }
             else{
@@ -95,19 +95,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void bindUI(){
         isrBtn1 = (ImageButton)findViewById(R.id.isrImageButton1);
-        isrBtn1.setTag(false);
         isrBtn2 = (ImageButton)findViewById(R.id.isrImageButton2);
-        isrBtn2.setTag(false);
 
         usaBtn1 = (ImageButton)findViewById(R.id.usaImageButton1);
-        usaBtn1.setTag(false);
         usaBtn2 = (ImageButton)findViewById(R.id.usaImageButton2);
-        usaBtn2.setTag(false);
 
         argBtn1 = (ImageButton)findViewById(R.id.argImageButton1);
-        argBtn1.setTag(false);
         argBtn2 = (ImageButton)findViewById(R.id.argImageButton2);
-        argBtn2.setTag(false);
     }
 
     private void correct(){
@@ -121,19 +115,19 @@ public class MainActivity extends AppCompatActivity {
         argBtn2.setBackgroundColor(0xFAFAFA);
         if(corrects == 3){
             isrBtn1.setImageResource(R.drawable.israel_flag_icon);
-            isrBtn1.setTag(false);
+            isrBtn1.setEnabled(true);
             isrBtn2.setImageResource(R.drawable.israel_flag_icon);
-            isrBtn2.setTag(false);
+            isrBtn2.setEnabled(true);
 
             usaBtn1.setImageResource(R.drawable.united_states_flag_icon);
-            usaBtn1.setTag(false);
+            usaBtn1.setEnabled(true);
             usaBtn2.setImageResource(R.drawable.united_states_flag_icon);
-            usaBtn2.setTag(false);
+            usaBtn2.setEnabled(true);
 
             argBtn1.setImageResource(R.drawable.argentina_flag_icon);
-            argBtn1.setTag(false);
+            argBtn1.setEnabled(true);
             argBtn2.setImageResource(R.drawable.argentina_flag_icon);
-            argBtn2.setTag(false);
+            argBtn2.setEnabled(true);
             corrects = 0;
         }
     }
