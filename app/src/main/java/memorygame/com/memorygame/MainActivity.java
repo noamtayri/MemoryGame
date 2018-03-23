@@ -26,6 +26,74 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        bindUI();
+
+        isrBtn1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                imageBtnClicked(isrBtn1, isrBtn2);
+            }
+        });
+
+        isrBtn2.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                imageBtnClicked(isrBtn2, isrBtn1);
+            }
+        });
+
+        usaBtn1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                imageBtnClicked(usaBtn1, usaBtn2);
+            }
+        });
+
+        usaBtn2.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                imageBtnClicked(usaBtn2, usaBtn1);
+            }
+        });
+
+        argBtn1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                imageBtnClicked(argBtn1, argBtn2);
+            }
+        });
+
+        argBtn2.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                imageBtnClicked(argBtn2, argBtn1);
+            }
+        });
+    }
+
+    private void imageBtnClicked(ImageButton pressedBtn, ImageButton matchBtn){
+        if(pressedBtn.getTag().equals(true))
+            return;
+        if(firstChoiseBtn == null){
+            firstChoiseBtn = pressedBtn;
+            pressedBtn.setBackgroundColor(Color.YELLOW);
+        }
+        else{
+            if(firstChoiseBtn == matchBtn){
+                matchBtn.setImageResource(R.drawable.star);
+                matchBtn.setTag(true);
+                pressedBtn.setImageResource(R.drawable.star);
+                pressedBtn.setTag(true);
+                correct();
+            }
+            else{
+                firstChoiseBtn.setBackgroundColor(0xFAFAFA);
+                firstChoiseBtn = null;
+            }
+        }
+    }
+
+    private void bindUI(){
         isrBtn1 = (ImageButton)findViewById(R.id.isrImageButton1);
         isrBtn1.setTag(false);
         isrBtn2 = (ImageButton)findViewById(R.id.isrImageButton2);
@@ -40,156 +108,6 @@ public class MainActivity extends AppCompatActivity {
         argBtn1.setTag(false);
         argBtn2 = (ImageButton)findViewById(R.id.argImageButton2);
         argBtn2.setTag(false);
-
-        isrBtn1.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                if(isrBtn1.getTag().equals(true))
-                    return;
-                if(firstChoiseBtn == null){
-                    firstChoiseBtn = isrBtn1;
-                    isrBtn1.setBackgroundColor(Color.YELLOW);
-                }
-                else{
-                    if(firstChoiseBtn == isrBtn2){
-                        isrBtn1.setImageResource(R.drawable.star);
-                        isrBtn1.setTag(true);
-                        isrBtn2.setImageResource(R.drawable.star);
-                        isrBtn2.setTag(true);
-                        correct();
-                    }
-                    else{
-                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
-                        firstChoiseBtn = null;
-                    }
-                }
-            }
-        });
-
-        isrBtn2.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                if(isrBtn2.getTag().equals(true))
-                    return;
-                if(firstChoiseBtn == null){
-                    firstChoiseBtn = isrBtn2;
-                    isrBtn2.setBackgroundColor(Color.YELLOW);
-                }
-                else{
-                    if(firstChoiseBtn == isrBtn1){
-                        isrBtn1.setImageResource(R.drawable.star);
-                        isrBtn1.setTag(true);
-                        isrBtn2.setImageResource(R.drawable.star);
-                        isrBtn2.setTag(true);
-                        correct();
-                    }
-                    else{
-                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
-                        firstChoiseBtn = null;
-                    }
-                }
-            }
-        });
-
-        usaBtn1.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                if(usaBtn1.getTag().equals(true))
-                    return;
-                if(firstChoiseBtn == null){
-                    firstChoiseBtn = usaBtn1;
-                    usaBtn1.setBackgroundColor(Color.YELLOW);
-                }
-                else{
-                    if(firstChoiseBtn == usaBtn2){
-                        usaBtn1.setImageResource(R.drawable.star);
-                        usaBtn1.setTag(true);
-                        usaBtn2.setImageResource(R.drawable.star);
-                        usaBtn2.setTag(true);
-                        correct();
-                    }
-                    else{
-                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
-                        firstChoiseBtn = null;
-                    }
-                }
-            }
-        });
-
-        usaBtn2.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                if(usaBtn2.getTag().equals(true))
-                    return;
-                if(firstChoiseBtn == null){
-                    firstChoiseBtn = usaBtn2;
-                    usaBtn2.setBackgroundColor(Color.YELLOW);
-                }
-                else{
-                    if(firstChoiseBtn == usaBtn1){
-                        usaBtn1.setImageResource(R.drawable.star);
-                        usaBtn1.setTag(true);
-                        usaBtn2.setImageResource(R.drawable.star);
-                        usaBtn2.setTag(true);
-                        correct();
-                    }
-                    else{
-                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
-                        firstChoiseBtn = null;
-                    }
-                }
-            }
-        });
-
-        argBtn1.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                if(argBtn1.getTag().equals(true))
-                    return;
-                if(firstChoiseBtn == null){
-                    firstChoiseBtn = argBtn1;
-                    argBtn1.setBackgroundColor(Color.YELLOW);
-                }
-                else{
-                    if(firstChoiseBtn == argBtn2){
-                        argBtn1.setImageResource(R.drawable.star);
-                        argBtn1.setTag(true);
-                        argBtn2.setImageResource(R.drawable.star);
-                        argBtn2.setTag(true);
-                        correct();
-                    }
-                    else{
-                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
-                        firstChoiseBtn = null;
-                    }
-                }
-            }
-        });
-
-        argBtn2.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                if(argBtn2.getTag().equals(true))
-                    return;
-                if(firstChoiseBtn == null){
-                    firstChoiseBtn = argBtn2;
-                    argBtn2.setBackgroundColor(Color.YELLOW);
-                }
-                else{
-                    if(firstChoiseBtn == argBtn1){
-                        argBtn1.setImageResource(R.drawable.star);
-                        argBtn1.setTag(true);
-                        argBtn2.setImageResource(R.drawable.star);
-                        argBtn2.setTag(true);
-                        correct();
-                    }
-                    else{
-                        firstChoiseBtn.setBackgroundColor(0xFAFAFA);
-                        firstChoiseBtn = null;
-                    }
-                }
-            }
-        });
     }
 
     private void correct(){
