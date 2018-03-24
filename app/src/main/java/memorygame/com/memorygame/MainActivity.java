@@ -1,135 +1,214 @@
 package memorygame.com.memorygame;
 
-import android.graphics.Color;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
-    ImageButton firstChoiseBtn = null;
+    MyBtn firstChoiseBtn = new MyBtn(null);
     private int corrects = 0;
 
-    ImageButton isrBtn1 = null;
-    ImageButton isrBtn2 = null;
+    MyBtn btn1 = new MyBtn(null);
+    MyBtn btn2 = new MyBtn(null);
+    MyBtn btn3 = new MyBtn(null);
+    MyBtn btn4 = new MyBtn(null);
+    MyBtn btn5 = new MyBtn(null);
+    MyBtn btn6 = new MyBtn(null);
 
-    ImageButton usaBtn1 = null;
-    ImageButton usaBtn2 = null;
-
-    ImageButton argBtn1 = null;
-    ImageButton argBtn2 = null;
+    List<Integer> imageList = new ArrayList<>(3);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initImageList();
+
         bindUI();
 
-        isrBtn1.setOnClickListener(new View.OnClickListener(){
+        btn1.btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                imageBtnClicked(isrBtn1, isrBtn2);
+                imageBtnClicked(btn1);
             }
         });
 
-        isrBtn2.setOnClickListener(new View.OnClickListener(){
+        btn2.btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                imageBtnClicked(isrBtn2, isrBtn1);
+                imageBtnClicked(btn2);
             }
         });
 
-        usaBtn1.setOnClickListener(new View.OnClickListener(){
+        btn3.btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                imageBtnClicked(usaBtn1, usaBtn2);
+                imageBtnClicked(btn3);
             }
         });
 
-        usaBtn2.setOnClickListener(new View.OnClickListener(){
+        btn4.btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                imageBtnClicked(usaBtn2, usaBtn1);
+                imageBtnClicked(btn4);
             }
         });
 
-        argBtn1.setOnClickListener(new View.OnClickListener(){
+        btn5.btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                imageBtnClicked(argBtn1, argBtn2);
+                imageBtnClicked(btn5);
             }
         });
 
-        argBtn2.setOnClickListener(new View.OnClickListener(){
+        btn6.btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                imageBtnClicked(argBtn2, argBtn1);
+                imageBtnClicked(btn6);
             }
         });
     }
 
-    private void imageBtnClicked(ImageButton pressedBtn, ImageButton matchBtn){
-        if(!pressedBtn.isEnabled())
+    private void imageBtnClicked(final MyBtn pressedBtn){
+        disableAllBtns();
+        if(pressedBtn.isStar){
+            enableAllBtns();
             return;
-        if(firstChoiseBtn == null){
+        }
+
+        pressedBtn.btn.setImageResource(Integer.parseInt(pressedBtn.btn.getTag().toString()));
+        if(firstChoiseBtn.btn == null){
             firstChoiseBtn = pressedBtn;
-            pressedBtn.setBackgroundColor(Color.YELLOW);
+            enableAllBtns();
         }
         else{
-            if(firstChoiseBtn == matchBtn){
-                matchBtn.setImageResource(R.drawable.star);
-                matchBtn.setEnabled(false);
-                pressedBtn.setImageResource(R.drawable.star);
-                pressedBtn.setEnabled(false);
-                correct();
-            }
-            else{
-                firstChoiseBtn.setBackgroundColor(0xFAFAFA);
-                firstChoiseBtn = null;
-            }
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    if((!firstChoiseBtn.btn.equals(pressedBtn.btn)) && (firstChoiseBtn.btn.getTag().toString().equals(pressedBtn.btn.getTag().toString()))){
+                        firstChoiseBtn.btn.setImageResource(R.drawable.star);
+                        pressedBtn.btn.setImageResource(R.drawable.star);
+                        firstChoiseBtn.isStar = true;
+                        pressedBtn.isStar = true;
+                        firstChoiseBtn = new MyBtn(null);
+                        correct();
+                    }else{
+                        firstChoiseBtn.btn.setImageResource(R.mipmap.ic_launcher);
+                        pressedBtn.btn.setImageResource(R.mipmap.ic_launcher);
+                        firstChoiseBtn = new MyBtn(null);
+                    }
+                    enableAllBtns();
+                }
+            },250);
         }
     }
 
     private void bindUI(){
-        isrBtn1 = (ImageButton)findViewById(R.id.isrImageButton1);
-        isrBtn2 = (ImageButton)findViewById(R.id.isrImageButton2);
+        btn1.btn = (ImageButton)findViewById(R.id.button1);
+        btn2.btn = (ImageButton)findViewById(R.id.button2);
+        btn3.btn = (ImageButton)findViewById(R.id.button3);
+        btn4.btn = (ImageButton)findViewById(R.id.button4);
+        btn5.btn = (ImageButton)findViewById(R.id.button5);
+        btn6.btn = (ImageButton)findViewById(R.id.button6);
 
-        usaBtn1 = (ImageButton)findViewById(R.id.usaImageButton1);
-        usaBtn2 = (ImageButton)findViewById(R.id.usaImageButton2);
-
-        argBtn1 = (ImageButton)findViewById(R.id.argImageButton1);
-        argBtn2 = (ImageButton)findViewById(R.id.argImageButton2);
+        dealNewCards();
     }
 
     private void correct(){
-        firstChoiseBtn = null;
-        corrects += 1;
-        isrBtn1.setBackgroundColor(0xFAFAFA);
-        isrBtn2.setBackgroundColor(0xFAFAFA);
-        usaBtn1.setBackgroundColor(0xFAFAFA);
-        usaBtn2.setBackgroundColor(0xFAFAFA);
-        argBtn1.setBackgroundColor(0xFAFAFA);
-        argBtn2.setBackgroundColor(0xFAFAFA);
-        if(corrects == 3){
-            isrBtn1.setImageResource(R.drawable.israel_flag_icon);
-            isrBtn1.setEnabled(true);
-            isrBtn2.setImageResource(R.drawable.israel_flag_icon);
-            isrBtn2.setEnabled(true);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                disableAllBtns();
+                corrects += 1;
+                if(corrects == 3){
+                    shuffleImageList();
 
-            usaBtn1.setImageResource(R.drawable.united_states_flag_icon);
-            usaBtn1.setEnabled(true);
-            usaBtn2.setImageResource(R.drawable.united_states_flag_icon);
-            usaBtn2.setEnabled(true);
+                    resetImages();
 
-            argBtn1.setImageResource(R.drawable.argentina_flag_icon);
-            argBtn1.setEnabled(true);
-            argBtn2.setImageResource(R.drawable.argentina_flag_icon);
-            argBtn2.setEnabled(true);
-            corrects = 0;
-        }
+                    dealNewCards();
+
+                    corrects = 0;
+                }
+                enableAllBtns();
+            }
+        },250);
+    }
+
+    private void initImageList(){
+        imageList.add(R.drawable.israel_flag_icon);
+        imageList.add(R.drawable.israel_flag_icon);
+        imageList.add(R.drawable.united_states_flag_icon);
+        imageList.add(R.drawable.united_states_flag_icon);
+        imageList.add(R.drawable.argentina_flag_icon);
+        imageList.add(R.drawable.argentina_flag_icon);
+
+        shuffleImageList();
+    }
+
+    private void shuffleImageList(){
+        Collections.shuffle(imageList);
+    }
+
+    private void dealNewCards(){
+        btn1.btn.setTag(imageList.get(0));
+        btn2.btn.setTag(imageList.get(1));
+        btn3.btn.setTag(imageList.get(2));
+        btn4.btn.setTag(imageList.get(3));
+        btn5.btn.setTag(imageList.get(4));
+        btn6.btn.setTag(imageList.get(5));
+    }
+
+    private void resetImages(){
+        btn1.btn.setImageResource(R.mipmap.ic_launcher);
+        btn2.btn.setImageResource(R.mipmap.ic_launcher);
+        btn3.btn.setImageResource(R.mipmap.ic_launcher);
+        btn4.btn.setImageResource(R.mipmap.ic_launcher);
+        btn5.btn.setImageResource(R.mipmap.ic_launcher);
+        btn6.btn.setImageResource(R.mipmap.ic_launcher);
+        btn1.isStar = false;
+        btn2.isStar = false;
+        btn3.isStar = false;
+        btn4.isStar = false;
+        btn5.isStar = false;
+        btn6.isStar = false;
+    }
+
+    private void disableAllBtns(){
+        btn1.btn.setEnabled(false);
+        btn2.btn.setEnabled(false);
+        btn3.btn.setEnabled(false);
+        btn4.btn.setEnabled(false);
+        btn5.btn.setEnabled(false);
+        btn6.btn.setEnabled(false);
+    }
+
+    private void enableAllBtns(){
+        btn1.btn.setEnabled(true);
+        btn2.btn.setEnabled(true);
+        btn3.btn.setEnabled(true);
+        btn4.btn.setEnabled(true);
+        btn5.btn.setEnabled(true);
+        btn6.btn.setEnabled(true);
+    }
+
+}
+class MyBtn{
+    ImageButton btn;
+    boolean isStar;
+
+    MyBtn(ImageButton btn){
+        this.btn = btn;
+        isStar = false;
     }
 }
 //
