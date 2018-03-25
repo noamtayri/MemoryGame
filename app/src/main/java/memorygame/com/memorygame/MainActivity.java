@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     enableAllBtns();
                 }
-            },250);
+            },500);
         }
     }
 
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 enableAllBtns();
             }
-        },250);
+        },500);
     }
 
     private void initImageList(){
@@ -211,4 +211,3 @@ class MyBtn{
         isStar = false;
     }
 }
-//

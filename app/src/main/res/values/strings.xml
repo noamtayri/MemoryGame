@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MemoryGame</string>
+    <string name="difficulty">Choose difficulty</string>
+    <string name="welcome">Weolcome</string>
 </resources>
