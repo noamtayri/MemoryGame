@@ -49,12 +49,12 @@ public class choose_level_Activity extends AppCompatActivity {
                 intent = new Intent(this, Main2Activity.class);
                 startActivity(intent);
                 break;
-            case "medium:":
+            case "medium":
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 break;
             case "hard":
-                intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, Main3Activity.class);
                 startActivity(intent);
                 break;
             default:
