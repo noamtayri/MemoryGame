@@ -131,13 +131,14 @@ public class MainActivity extends AppCompatActivity {
                 disableAllBtns();
                 corrects += 1;
                 if(corrects == 3){
-                    shuffleImageList();
-
-                    resetImages();
-
-                    dealNewCards();
-
-                    corrects = 0;
+                    finish();
+//                    shuffleImageList();
+//
+//                    resetImages();
+//
+//                    dealNewCards();
+//
+//                    corrects = 0;
                 }
                 enableAllBtns();
             }

@@ -148,13 +148,14 @@ public class Main3Activity extends AppCompatActivity {
                 disableAllBtns();
                 corrects += 1;
                 if(corrects == 4){
-                    shuffleImageList();
-
-                    resetImages();
-
-                    dealNewCards();
-
-                    corrects = 0;
+                    finish();
+//                    shuffleImageList();
+//
+//                    resetImages();
+//
+//                    dealNewCards();
+//
+//                    corrects = 0;
                 }
                 enableAllBtns();
             }

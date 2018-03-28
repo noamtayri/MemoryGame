@@ -113,13 +113,14 @@ public class Main2Activity extends AppCompatActivity {
                 disableAllBtns();
                 corrects += 1;
                 if(corrects == 2){
-                    shuffleImageList();
-
-                    resetImages();
-
-                    dealNewCards();
-
-                    corrects = 0;
+                    finish();
+//                    shuffleImageList();
+//
+//                    resetImages();
+//
+//                    dealNewCards();
+//
+//                    corrects = 0;
                 }
                 enableAllBtns();
             }
