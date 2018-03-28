@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".choose_level_Activity"></activity>
+        <activity android:name=".choose_level_Activity" />
+        <activity android:name=".Main2Activity"></activity>
     </application>
 
 </manifest>

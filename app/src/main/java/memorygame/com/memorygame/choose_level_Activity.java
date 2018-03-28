@@ -46,7 +46,7 @@ public class choose_level_Activity extends AppCompatActivity {
         Intent intent;
         switch (spinner.getSelectedItem().toString()){
             case "easy":
-                intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, Main2Activity.class);
                 startActivity(intent);
                 break;
             case "medium:":
