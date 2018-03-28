@@ -30,7 +30,7 @@ public class choose_level_Activity extends AppCompatActivity {
         String[] levels = {"easy","medium","hard"};
 
         spinner = (Spinner)findViewById(R.id.spinner);
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, levels);
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, levels);
         spinner.setAdapter(adapter);
 
         Button play = (Button)findViewById(R.id.playButton);
