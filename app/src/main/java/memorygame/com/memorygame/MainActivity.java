@@ -203,12 +203,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-class MyBtn{
-    ImageButton btn;
-    boolean isStar;
-
-    MyBtn(ImageButton btn){
-        this.btn = btn;
-        isStar = false;
-    }
-}
+//class MyBtn{
+//    ImageButton btn;
+//    boolean isStar;
+//
+//    MyBtn(ImageButton btn){
+//        this.btn = btn;
+//        isStar = false;
+//    }
+//}
