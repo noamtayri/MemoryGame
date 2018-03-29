@@ -14,6 +14,8 @@ import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
 
+    public final String TIMER = "timer";
+
     MyBtn firstChoiseBtn = new MyBtn(null);
     private int corrects = 0;
     TextView timer;
@@ -27,12 +29,16 @@ public class Main2Activity extends AppCompatActivity {
 
     CountDownTimer countDown;
 
+    Bundle data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        timerLogic();
+        data = getIntent().getExtras();
+        if(data.getBoolean(TIMER))
+            timerLogic();
 
         initImageList();
 
@@ -122,7 +128,8 @@ public class Main2Activity extends AppCompatActivity {
                 disableAllBtns();
                 corrects += 1;
                 if(corrects == 2){
-                    countDown.cancel();
+                    if(data.getBoolean(TIMER))
+                        countDown.cancel();
                     finish();
                 }
                 enableAllBtns();

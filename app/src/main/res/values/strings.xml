@@ -3,4 +3,5 @@
     <string name="difficulty">Choose difficulty</string>
     <string name="welcome">Weolcome</string>
     <string name="play">Play</string>
+    <string name="timer">Timer</string>
 </resources>
