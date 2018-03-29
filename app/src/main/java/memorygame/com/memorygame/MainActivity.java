@@ -1,11 +1,13 @@
 package memorygame.com.memorygame;
 
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     MyBtn firstChoiseBtn = new MyBtn(null);
     private int corrects = 0;
+    TextView timer;
 
     MyBtn btn1 = new MyBtn(null);
     MyBtn btn2 = new MyBtn(null);
@@ -25,10 +28,14 @@ public class MainActivity extends AppCompatActivity {
 
     List<Integer> imageList = new ArrayList<>(3);
 
+    CountDownTimer countDown;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        timerLogic();
 
         initImageList();
 
@@ -120,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
         btn5.btn = (ImageButton)findViewById(R.id.button5);
         btn6.btn = (ImageButton)findViewById(R.id.button6);
 
+        timer = (TextView)findViewById(R.id.timerTextView);
+
         dealNewCards();
     }
 
@@ -131,14 +140,8 @@ public class MainActivity extends AppCompatActivity {
                 disableAllBtns();
                 corrects += 1;
                 if(corrects == 3){
+                    countDown.cancel();
                     finish();
-//                    shuffleImageList();
-//
-//                    resetImages();
-//
-//                    dealNewCards();
-//
-//                    corrects = 0;
                 }
                 enableAllBtns();
             }
@@ -202,13 +205,24 @@ public class MainActivity extends AppCompatActivity {
         btn6.btn.setEnabled(true);
     }
 
+    private void timerLogic(){
+        countDown = new CountDownTimer(15000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timer.setText("" + millisUntilFinished / 1000);
+            }
+
+            @Override
+            public void onFinish() {
+                timer.setText("time's up");
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable(){
+                    @Override
+                    public void run(){
+                        finish();
+                    }
+                },1000);
+            }
+        }.start();
+    }
 }
-//class MyBtn{
-//    ImageButton btn;
-//    boolean isStar;
-//
-//    MyBtn(ImageButton btn){
-//        this.btn = btn;
-//        isStar = false;
-//    }
-//}
