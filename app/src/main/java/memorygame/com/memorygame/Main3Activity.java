@@ -14,8 +14,6 @@ import java.util.List;
 
 public class Main3Activity extends AppCompatActivity {
 
-    public final String TIMER = "timer";
-
     MyBtn firstChoiseBtn = new MyBtn(null);
     private int corrects = 0;
     TextView timer;
@@ -41,7 +39,7 @@ public class Main3Activity extends AppCompatActivity {
         setContentView(R.layout.activity_main3);
 
         data = getIntent().getExtras();
-        if(data.getBoolean(TIMER))
+        if(data.getBoolean(choose_level_Activity.TIMER))
             timerLogic();
 
         initImageList();
@@ -163,7 +161,7 @@ public class Main3Activity extends AppCompatActivity {
                 disableAllBtns();
                 corrects += 1;
                 if(corrects == 4){
-                    if(data.getBoolean(TIMER))
+                    if(data.getBoolean(choose_level_Activity.TIMER))
                         countDown.cancel();
                     finish();
                 }
