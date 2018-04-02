@@ -15,8 +15,7 @@ import android.widget.TextView;
 
 public class choose_level_Activity extends AppCompatActivity {
 
-    public final String TIMER = "timer";
-    public final String USER_NAME = "userName";
+    public static final String TIMER = "timer";
 
     TextView welcomeTextView = null;
     TextView nameTextView = null;
@@ -35,10 +34,11 @@ public class choose_level_Activity extends AppCompatActivity {
         init();
 
         Bundle data = getIntent().getExtras();
-        String userName = data.getString(USER_NAME);
+        String userName = data.getString(HomeActivity.USER_NAME);
+        String age = data.getString(HomeActivity.USER_AGE);
 
         TextView name = (TextView)findViewById(R.id.nameTextView);
-        name.setText(userName);
+        name.setText(userName + ", " + age);
 
         String[] levels = {"easy","medium","hard"};
 
