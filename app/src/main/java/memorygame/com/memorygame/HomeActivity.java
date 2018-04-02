@@ -10,7 +10,8 @@ import android.widget.EditText;
 
 public class HomeActivity extends AppCompatActivity {
 
-    public final String USER_NAME = "userName";
+    public static String USER_NAME = "userName";
+    public static String USER_AGE = "userAge";
     final int SEND_USER_NAME = 1;
 
     @Override
@@ -30,8 +31,10 @@ public class HomeActivity extends AppCompatActivity {
 
     private void nextBtn(){
         EditText name = (EditText)findViewById(R.id.nameEditText);
+        EditText age = (EditText)findViewById(R.id.ageEditText);
         Intent intent = new Intent(this, choose_level_Activity.class);
         intent.putExtra(USER_NAME, name.getText().toString());
+        intent.putExtra(USER_AGE, age.getText().toString());
         startActivity(intent);
     }
 }
