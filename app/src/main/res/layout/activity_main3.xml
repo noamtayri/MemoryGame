@@ -9,119 +9,339 @@
     tools:layout_editor_absoluteX="0dp">
 
     <ImageButton
+        android:id="@+id/button1"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button24"
+        app:layout_constraintLeft_toRightOf="@+id/button9"
+        app:layout_constraintBottom_toTopOf="@+id/button22"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
         android:id="@+id/button2"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button7"
+        app:layout_constraintLeft_toRightOf="@+id/button10"
+        app:layout_constraintBottom_toTopOf="@+id/button12"
+        app:layout_constraintTop_toBottomOf="@+id/button6" />
+
+    <ImageButton
+        android:id="@+id/button3"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:adjustViewBounds="true"
         android:background="#FAFAFA"
         android:scaleType="fitXY"
         app:srcCompat="@mipmap/ic_launcher"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/button5"
-        app:layout_constraintBottom_toTopOf="@+id/button7"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintLeft_toRightOf="@+id/button11"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button20" />
 
     <ImageButton
-        android:id="@+id/button3"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
+        android:id="@+id/button4"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button11"
+        app:layout_constraintLeft_toRightOf="@+id/button12"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button7" />
+
+    <ImageButton
+        android:id="@+id/button5"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button21"
+        app:layout_constraintLeft_toRightOf="@+id/button13"
+        app:layout_constraintBottom_toTopOf="@+id/button6"
+        app:layout_constraintTop_toBottomOf="@+id/button17" />
+
+    <ImageButton
+        android:id="@+id/button6"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:adjustViewBounds="true"
         android:background="#FAFAFA"
         android:scaleType="fitXY"
         app:srcCompat="@mipmap/ic_launcher"
         app:layout_constraintRight_toLeftOf="@+id/button8"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/button1"
-        app:layout_constraintTop_toBottomOf="@+id/button6" />
-
-    <ImageButton
-        android:id="@+id/button4"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
-        android:adjustViewBounds="true"
-        android:background="#FAFAFA"
-        android:scaleType="fitXY"
-        app:srcCompat="@mipmap/ic_launcher"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/button1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button8" />
-
-    <ImageButton
-        android:id="@+id/button1"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
-        android:adjustViewBounds="true"
-        android:background="#FAFAFA"
-        android:scaleType="fitXY"
-        app:srcCompat="@mipmap/ic_launcher"
-        app:layout_constraintRight_toLeftOf="@+id/button4"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3" />
-
-    <ImageButton
-        android:id="@+id/button6"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
-        android:adjustViewBounds="true"
-        android:background="#FAFAFA"
-        android:scaleType="fitXY"
-        app:srcCompat="@mipmap/ic_launcher"
-        app:layout_constraintRight_toLeftOf="@+id/button7"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/button3"
+        app:layout_constraintBottom_toTopOf="@+id/button2"
         app:layout_constraintTop_toBottomOf="@+id/button5" />
 
     <ImageButton
         android:id="@+id/button7"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:adjustViewBounds="true"
         android:background="#FAFAFA"
         android:scaleType="fitXY"
         app:srcCompat="@mipmap/ic_launcher"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/button6"
-        app:layout_constraintBottom_toTopOf="@+id/button8"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintRight_toLeftOf="@+id/button16"
+        app:layout_constraintLeft_toRightOf="@+id/button2"
+        app:layout_constraintBottom_toTopOf="@+id/button4"
+        app:layout_constraintTop_toBottomOf="@+id/button8" />
 
     <ImageButton
         android:id="@+id/button8"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:adjustViewBounds="true"
         android:background="#FAFAFA"
         android:scaleType="fitXY"
         app:srcCompat="@mipmap/ic_launcher"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/button3"
-        app:layout_constraintBottom_toTopOf="@+id/button4"
-        app:layout_constraintTop_toBottomOf="@+id/button7" />
+        app:layout_constraintRight_toLeftOf="@+id/button23"
+        app:layout_constraintLeft_toRightOf="@+id/button6"
+        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintTop_toBottomOf="@+id/button5" />
 
     <ImageButton
-        android:id="@+id/button5"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
+        android:id="@+id/button9"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button1"
+        app:layout_constraintLeft_toRightOf="@+id/button17"
+        app:layout_constraintBottom_toTopOf="@+id/button21"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/button10"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:adjustViewBounds="true"
         android:background="#FAFAFA"
         android:scaleType="fitXY"
         app:srcCompat="@mipmap/ic_launcher"
         app:layout_constraintRight_toLeftOf="@+id/button2"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button19"
+        app:layout_constraintTop_toBottomOf="@+id/button6" />
+
+    <ImageButton
+        android:id="@+id/button11"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button3"
+        app:layout_constraintLeft_toRightOf="@+id/button4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button16" />
+
+    <ImageButton
+        android:id="@+id/button12"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button4"
+        app:layout_constraintLeft_toRightOf="@+id/button19"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
+
+    <ImageButton
+        android:id="@+id/button13"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button5"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/button6"
+        app:layout_constraintTop_toBottomOf="@+id/button18" />
+
+    <ImageButton
+        android:id="@+id/button14"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/button22"
+        app:layout_constraintBottom_toTopOf="@+id/button15"
+        app:layout_constraintTop_toBottomOf="@+id/button24" />
+
+    <ImageButton
+        android:id="@+id/button15"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/button23"
+        app:layout_constraintBottom_toTopOf="@+id/button16"
+        app:layout_constraintTop_toBottomOf="@+id/button14" />
+
+    <ImageButton
+        android:id="@+id/button16"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button20"
+        app:layout_constraintLeft_toRightOf="@+id/button7"
+        app:layout_constraintBottom_toTopOf="@+id/button11"
+        app:layout_constraintTop_toBottomOf="@+id/button15" />
+
+    <ImageButton
+        android:id="@+id/button17"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button9"
+        app:layout_constraintLeft_toRightOf="@+id/button18"
+        app:layout_constraintBottom_toTopOf="@+id/button5"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/button18"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button17"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button13"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/button19"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button12"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button10" />
+
+    <ImageButton
+        android:id="@+id/button20"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/button16"
+        app:layout_constraintBottom_toTopOf="@+id/button3"
+        app:layout_constraintTop_toBottomOf="@+id/button15" />
+
+    <ImageButton
+        android:id="@+id/button21"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button22"
+        app:layout_constraintLeft_toRightOf="@+id/button5"
+        app:layout_constraintBottom_toTopOf="@+id/button8"
+        app:layout_constraintTop_toBottomOf="@+id/button9" />
+
+    <ImageButton
+        android:id="@+id/button22"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button14"
+        app:layout_constraintLeft_toRightOf="@+id/button21"
+        app:layout_constraintBottom_toTopOf="@+id/button15"
+        app:layout_constraintTop_toBottomOf="@+id/button1" />
+
+    <ImageButton
+        android:id="@+id/button23"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toLeftOf="@+id/button15"
+        app:layout_constraintLeft_toRightOf="@+id/button8"
+        app:layout_constraintBottom_toTopOf="@+id/button7"
+        app:layout_constraintTop_toBottomOf="@+id/button21" />
+
+    <ImageButton
+        android:id="@+id/button24"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:background="#FAFAFA"
+        android:scaleType="fitXY"
+        app:srcCompat="@mipmap/ic_launcher"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/button1"
+        app:layout_constraintBottom_toTopOf="@+id/button14"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/timerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="0dp"
         android:textColor="@android:color/holo_red_dark"
         android:textSize="24sp"
+        tools:text="aaa"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/nameTextView"
         app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="0dp" />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        tools:text="aaa"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintLeft_toRightOf="@+id/timerTextView"
+        android:layout_marginTop="0dp" />
+
+    
 </android.support.constraint.ConstraintLayout>
