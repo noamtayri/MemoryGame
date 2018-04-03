@@ -18,13 +18,9 @@ public class Main2Activity extends AppCompatActivity {
     private int corrects = 0;
     TextView timer;
     TextView name;
+    TextView winLose;
 
     MyBtn[] allBtn = new MyBtn[4];
-
-//    MyBtn btn1 = new MyBtn(null);
-//    MyBtn btn2 = new MyBtn(null);
-//    MyBtn btn3 = new MyBtn(null);
-//    MyBtn btn4 = new MyBtn(null);
 
     List<Integer> imageList = new ArrayList<>(2);
 
@@ -37,14 +33,13 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        for(int i=0 ; i<allBtn.length ; i++){
+        for (int i = 0; i < allBtn.length; i++) {
             allBtn[i] = new MyBtn(null);
         }
 
         data = getIntent().getExtras();
-        if(data.getBoolean(choose_level_Activity.TIMER))
-        {
-            timer = (TextView)findViewById(R.id.timerTextView);
+        if (data.getBoolean(choose_level_Activity.TIMER)) {
+            timer = (TextView) findViewById(R.id.timerTextView);
             timerLogic();
         }
 
@@ -54,109 +49,83 @@ public class Main2Activity extends AppCompatActivity {
 
         name.setText("" + data.get(HomeActivity.USER_NAME));
 
-        for(final MyBtn btn : allBtn){
-            btn.btn.setOnClickListener(new View.OnClickListener(){
+        for (final MyBtn btn : allBtn) {
+            btn.btn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view){
+                public void onClick(View view) {
                     imageBtnClicked(btn);
                 }
             });
         }
 
-//        btn1.btn.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view){
-//                imageBtnClicked(btn1);
-//            }
-//        });
-//
-//        btn2.btn.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view){
-//                imageBtnClicked(btn2);
-//            }
-//        });
-//
-//        btn3.btn.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view){
-//                imageBtnClicked(btn3);
-//            }
-//        });
-//
-//        btn4.btn.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view){
-//                imageBtnClicked(btn4);
-//            }
-//        });
-
     }
 
-    private void imageBtnClicked(final MyBtn pressedBtn){
+    private void imageBtnClicked(final MyBtn pressedBtn) {
         disableAllBtns();
-        if(pressedBtn.isStar){
+        if (pressedBtn.isStar) {
             enableAllBtns();
             return;
         }
 
         pressedBtn.btn.setImageResource(Integer.parseInt(pressedBtn.btn.getTag().toString()));
-        if(firstChoiseBtn.btn == null){
+        if (firstChoiseBtn.btn == null) {
             firstChoiseBtn = pressedBtn;
             enableAllBtns();
-        }
-        else{
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    if((!firstChoiseBtn.btn.equals(pressedBtn.btn)) && (firstChoiseBtn.btn.getTag().toString().equals(pressedBtn.btn.getTag().toString()))){
-//                        firstChoiseBtn.btn.setImageResource(R.drawable.star);
-//                        pressedBtn.btn.setImageResource(R.drawable.star);
-                        firstChoiseBtn.isStar = true;
-                        pressedBtn.isStar = true;
-                        firstChoiseBtn = new MyBtn(null);
-                        correct();
-                    }else{
+        } else {
+            if ((!firstChoiseBtn.btn.equals(pressedBtn.btn)) && (firstChoiseBtn.btn.getTag().toString().equals(pressedBtn.btn.getTag().toString()))) {
+                firstChoiseBtn.isStar = true;
+                pressedBtn.isStar = true;
+                firstChoiseBtn = new MyBtn(null);
+                correct();
+            } else {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                         firstChoiseBtn.btn.setImageResource(R.mipmap.ic_launcher);
                         pressedBtn.btn.setImageResource(R.mipmap.ic_launcher);
                         firstChoiseBtn = new MyBtn(null);
+                        enableAllBtns();
                     }
-                    enableAllBtns();
-                }
-            },1000);
+                }, 1000);
+            }
         }
     }
 
-    private void bindUI(){
-        name = (TextView)findViewById(R.id.nameTextView);
+    private void bindUI() {
+        name = (TextView) findViewById(R.id.nameTextView);
+        winLose = (TextView) findViewById(R.id.winLoseTextView);
 
-        allBtn[1].btn = (ImageButton)findViewById(R.id.button1);
-        allBtn[2].btn = (ImageButton)findViewById(R.id.button2);
-        allBtn[3].btn = (ImageButton)findViewById(R.id.button3);
-        allBtn[0].btn = (ImageButton)findViewById(R.id.button4);
+        allBtn[1].btn = (ImageButton) findViewById(R.id.button1);
+        allBtn[2].btn = (ImageButton) findViewById(R.id.button2);
+        allBtn[3].btn = (ImageButton) findViewById(R.id.button3);
+        allBtn[0].btn = (ImageButton) findViewById(R.id.button4);
 
         dealNewCards();
     }
 
-    private void correct(){
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable(){
-            @Override
-            public void run(){
-                disableAllBtns();
-                corrects += 1;
-                if(corrects == 2){
-                    if(data.getBoolean(choose_level_Activity.TIMER))
-                        countDown.cancel();
+    private void correct() {
+        disableAllBtns();
+        corrects += 1;
+        if (corrects == 2) {
+            if (data.getBoolean(choose_level_Activity.TIMER))
+                countDown.cancel();
+            winLose.setText(R.string.win_msg);
+            winLose.setVisibility(View.VISIBLE);
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
                     finish();
                 }
-                enableAllBtns();
-            }
-        },500);
+            }, 2000);
+
+        }
+        enableAllBtns();
     }
 
-    private void initImageList(){
+    private void initImageList() {
         imageList.add(R.drawable.israel_flag_icon);
         imageList.add(R.drawable.israel_flag_icon);
         imageList.add(R.drawable.united_states_flag_icon);
@@ -165,55 +134,29 @@ public class Main2Activity extends AppCompatActivity {
         shuffleImageList();
     }
 
-    private void shuffleImageList(){
+    private void shuffleImageList() {
         Collections.shuffle(imageList);
     }
 
-    private void dealNewCards(){
-        for(int i = 0 ; i<allBtn.length ; i++){
+    private void dealNewCards() {
+        for (int i = 0; i < allBtn.length; i++) {
             allBtn[i].btn.setTag(imageList.get(i));
         }
-
-//        btn1.btn.setTag(imageList.get(0));
-//        btn2.btn.setTag(imageList.get(1));
-//        btn3.btn.setTag(imageList.get(2));
-//        btn4.btn.setTag(imageList.get(3));
     }
 
-    private void resetImages(){
-//        btn1.btn.setImageResource(R.mipmap.ic_launcher);
-//        btn2.btn.setImageResource(R.mipmap.ic_launcher);
-//        btn3.btn.setImageResource(R.mipmap.ic_launcher);
-//        btn4.btn.setImageResource(R.mipmap.ic_launcher);
-//        btn1.isStar = false;
-//        btn2.isStar = false;
-//        btn3.isStar = false;
-//        btn4.isStar = false;
-    }
-
-    private void disableAllBtns(){
-        for(MyBtn btn : allBtn){
+    private void disableAllBtns() {
+        for (MyBtn btn : allBtn) {
             btn.btn.setEnabled(false);
         }
-
-//        btn1.btn.setEnabled(false);
-//        btn2.btn.setEnabled(false);
-//        btn3.btn.setEnabled(false);
-//        btn4.btn.setEnabled(false);
     }
 
-    private void enableAllBtns(){
-        for(MyBtn btn : allBtn){
+    private void enableAllBtns() {
+        for (MyBtn btn : allBtn) {
             btn.btn.setEnabled(true);
         }
-
-//        btn1.btn.setEnabled(true);
-//        btn2.btn.setEnabled(true);
-//        btn3.btn.setEnabled(true);
-//        btn4.btn.setEnabled(true);
     }
 
-    private void timerLogic(){
+    private void timerLogic() {
         countDown = new CountDownTimer(30000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -222,14 +165,16 @@ public class Main2Activity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                timer.setText("time's up");
+                timer.setText("0");
+                winLose.setText(R.string.lose_msg);
+                winLose.setVisibility(View.VISIBLE);
                 final Handler handler = new Handler();
-                handler.postDelayed(new Runnable(){
+                handler.postDelayed(new Runnable() {
                     @Override
-                    public void run(){
+                    public void run() {
                         finish();
                     }
-                },1000);
+                }, 2000);
             }
         }.start();
     }

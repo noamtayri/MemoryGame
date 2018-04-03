@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">MemoryGame</string>
     <string name="difficulty">Choose difficulty</string>
-    <string name="welcome">Weolcome</string>
+    <string name="welcome">Welcome</string>
     <string name="play">Play</string>
     <string name="timer">Timer</string>
+    <string name="win_msg">Good Job</string>
+    <string name="lose_msg">Time\'s Up</string>
 </resources>
