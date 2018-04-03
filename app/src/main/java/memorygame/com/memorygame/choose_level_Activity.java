@@ -23,6 +23,8 @@ public class choose_level_Activity extends AppCompatActivity {
     Spinner spinner = null;
     Button playBtn = null;
     CheckBox checkBox;
+    String userName;
+    String age;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +36,8 @@ public class choose_level_Activity extends AppCompatActivity {
         init();
 
         Bundle data = getIntent().getExtras();
-        String userName = data.getString(HomeActivity.USER_NAME);
-        String age = data.getString(HomeActivity.USER_AGE);
+        userName = data.getString(HomeActivity.USER_NAME);
+        age = data.getString(HomeActivity.USER_AGE);
 
         TextView name = (TextView)findViewById(R.id.nameTextView);
         name.setText(userName + ", " + age);
@@ -70,6 +72,7 @@ public class choose_level_Activity extends AppCompatActivity {
                 break;
         }
         intent.putExtra(TIMER,checkBox.isChecked());
+        intent.putExtra(HomeActivity.USER_NAME, userName);
         startActivity(intent);
     }
 

@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     MyBtn firstChoiseBtn = new MyBtn(null);
     private int corrects = 0;
     TextView timer;
+    TextView name;
 
     MyBtn btn1 = new MyBtn(null);
     MyBtn btn2 = new MyBtn(null);
@@ -39,11 +40,16 @@ public class MainActivity extends AppCompatActivity {
 
         data = getIntent().getExtras();
         if(data.getBoolean(choose_level_Activity.TIMER))
+        {
+            timer = (TextView)findViewById(R.id.timerTextView);
             timerLogic();
+        }
 
         initImageList();
 
         bindUI();
+
+        name.setText("" + data.get(HomeActivity.USER_NAME));
 
         btn1.btn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -106,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run(){
                     if((!firstChoiseBtn.btn.equals(pressedBtn.btn)) && (firstChoiseBtn.btn.getTag().toString().equals(pressedBtn.btn.getTag().toString()))){
-                        firstChoiseBtn.btn.setImageResource(R.drawable.star);
-                        pressedBtn.btn.setImageResource(R.drawable.star);
+//                        firstChoiseBtn.btn.setImageResource(R.drawable.star);
+//                        pressedBtn.btn.setImageResource(R.drawable.star);
                         firstChoiseBtn.isStar = true;
                         pressedBtn.isStar = true;
                         firstChoiseBtn = new MyBtn(null);
@@ -124,14 +130,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void bindUI(){
+        name = (TextView)findViewById(R.id.nameTextView);
+
         btn1.btn = (ImageButton)findViewById(R.id.button1);
         btn2.btn = (ImageButton)findViewById(R.id.button2);
         btn3.btn = (ImageButton)findViewById(R.id.button3);
         btn4.btn = (ImageButton)findViewById(R.id.button4);
         btn5.btn = (ImageButton)findViewById(R.id.button5);
         btn6.btn = (ImageButton)findViewById(R.id.button6);
-
-        timer = (TextView)findViewById(R.id.timerTextView);
 
         dealNewCards();
     }
