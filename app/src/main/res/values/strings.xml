@@ -4,6 +4,6 @@
     <string name="welcome">Welcome</string>
     <string name="play">Play</string>
     <string name="timer">Timer</string>
-    <string name="win_msg">Good Job</string>
+    <string name="win_msg">You Win</string>
     <string name="lose_msg">Time\'s Up</string>
 </resources>
