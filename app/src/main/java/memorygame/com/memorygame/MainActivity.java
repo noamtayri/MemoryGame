@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                         firstChoiseBtn = new MyBtn(null);
                         enableAllBtns();
                     }
-                }, 1000);
+                }, 500);
             }
         }
     }
@@ -123,7 +123,9 @@ public class MainActivity extends AppCompatActivity {
                 countDown.cancel();
             winLose.setText(R.string.win_msg);
             winLose.setVisibility(View.VISIBLE);
-
+            for (MyBtn btn : allBtn) {
+                btn.btn.setVisibility(View.INVISIBLE);
+            }
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -191,6 +193,9 @@ public class MainActivity extends AppCompatActivity {
                 timer.setText("0");
                 winLose.setText(R.string.lose_msg);
                 winLose.setVisibility(View.VISIBLE);
+                for (MyBtn btn : allBtn) {
+                    btn.btn.setVisibility(View.INVISIBLE);
+                }
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
