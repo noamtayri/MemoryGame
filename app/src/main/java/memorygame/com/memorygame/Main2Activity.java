@@ -7,12 +7,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
+
+    final int NUM_OF_CARDS = 4;
+    final int TIMER_LIMIT = 30000;
 
     MyBtn firstChoiseBtn = new MyBtn(null);
     private int corrects = 0;
@@ -20,9 +21,9 @@ public class Main2Activity extends AppCompatActivity {
     TextView name;
     TextView winLose;
 
-    MyBtn[] allBtn = new MyBtn[4];
+    MyBtn[] allBtn = new MyBtn[NUM_OF_CARDS];
 
-    List<Integer> imageList = new ArrayList<>(2);
+    List<Integer> imageList = new ArrayList<>();
 
     CountDownTimer countDown;
 
@@ -57,20 +58,19 @@ public class Main2Activity extends AppCompatActivity {
                 }
             });
         }
-
     }
 
     private void imageBtnClicked(final MyBtn pressedBtn) {
-        disableAllBtns();
+        GameLogic.disableAllBtns(allBtn);
         if (pressedBtn.isStar) {
-            enableAllBtns();
+            GameLogic.enableAllBtns(allBtn);
             return;
         }
 
         pressedBtn.btn.setImageResource(Integer.parseInt(pressedBtn.btn.getTag().toString()));
         if (firstChoiseBtn.btn == null) {
             firstChoiseBtn = pressedBtn;
-            enableAllBtns();
+            GameLogic.enableAllBtns(allBtn);
         } else {
             if ((!firstChoiseBtn.btn.equals(pressedBtn.btn)) && (firstChoiseBtn.btn.getTag().toString().equals(pressedBtn.btn.getTag().toString()))) {
                 firstChoiseBtn.isStar = true;
@@ -85,7 +85,7 @@ public class Main2Activity extends AppCompatActivity {
                         firstChoiseBtn.btn.setImageResource(R.mipmap.ic_launcher);
                         pressedBtn.btn.setImageResource(R.mipmap.ic_launcher);
                         firstChoiseBtn = new MyBtn(null);
-                        enableAllBtns();
+                        GameLogic.enableAllBtns(allBtn);
                     }
                 }, 500);
             }
@@ -101,13 +101,13 @@ public class Main2Activity extends AppCompatActivity {
         allBtn[3].btn = (ImageButton) findViewById(R.id.button3);
         allBtn[0].btn = (ImageButton) findViewById(R.id.button4);
 
-        dealNewCards();
+        GameLogic.dealNewCards(imageList,allBtn);
     }
 
     private void correct() {
-        disableAllBtns();
+        GameLogic.disableAllBtns(allBtn);
         corrects += 1;
-        if (corrects == 2) {
+        if (corrects == NUM_OF_CARDS/2) {
             if (data.getBoolean(choose_level_Activity.TIMER))
                 countDown.cancel();
             winLose.setText(R.string.win_msg);
@@ -121,7 +121,7 @@ public class Main2Activity extends AppCompatActivity {
             }, 2000);
 
         }
-        enableAllBtns();
+        GameLogic.enableAllBtns(allBtn);
     }
 
     private void initImageList() {
@@ -130,33 +130,11 @@ public class Main2Activity extends AppCompatActivity {
         imageList.add(R.drawable.united_states_flag_icon);
         imageList.add(R.drawable.united_states_flag_icon);
 
-        shuffleImageList();
-    }
-
-    private void shuffleImageList() {
-        Collections.shuffle(imageList);
-    }
-
-    private void dealNewCards() {
-        for (int i = 0; i < allBtn.length; i++) {
-            allBtn[i].btn.setTag(imageList.get(i));
-        }
-    }
-
-    private void disableAllBtns() {
-        for (MyBtn btn : allBtn) {
-            btn.btn.setEnabled(false);
-        }
-    }
-
-    private void enableAllBtns() {
-        for (MyBtn btn : allBtn) {
-            btn.btn.setEnabled(true);
-        }
+        GameLogic.shuffleImageList(imageList);
     }
 
     private void timerLogic() {
-        countDown = new CountDownTimer(30000, 1000) {
+        countDown = new CountDownTimer(TIMER_LIMIT, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 timer.setText("" + millisUntilFinished / 1000);
@@ -178,5 +156,3 @@ public class Main2Activity extends AppCompatActivity {
         }.start();
     }
 }
-
-

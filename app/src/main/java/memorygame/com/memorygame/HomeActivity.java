@@ -12,7 +12,6 @@ public class HomeActivity extends AppCompatActivity {
 
     public static final String USER_NAME = "userName";
     public static final String USER_AGE = "userAge";
-    final int SEND_USER_NAME = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

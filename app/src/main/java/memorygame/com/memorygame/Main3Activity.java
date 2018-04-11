@@ -7,12 +7,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Main3Activity extends AppCompatActivity {
+
+    final int NUM_OF_CARDS = 24;
+    final int TIMER_LIMIT = 60000;
 
     MyBtn firstChoiseBtn = new MyBtn(null);
     private int corrects = 0;
@@ -20,9 +21,9 @@ public class Main3Activity extends AppCompatActivity {
     TextView name;
     TextView winLose;
 
-    MyBtn[] allBtn = new MyBtn[24];
+    MyBtn[] allBtn = new MyBtn[NUM_OF_CARDS];
 
-    List<Integer> imageList = new ArrayList<>(3);
+    List<Integer> imageList = new ArrayList<>();
 
     CountDownTimer countDown;
 
@@ -60,16 +61,16 @@ public class Main3Activity extends AppCompatActivity {
     }
 
     private void imageBtnClicked(final MyBtn pressedBtn) {
-        disableAllBtns();
+        GameLogic.disableAllBtns(allBtn);
         if (pressedBtn.isStar) {
-            enableAllBtns();
+            GameLogic.enableAllBtns(allBtn);
             return;
         }
 
         pressedBtn.btn.setImageResource(Integer.parseInt(pressedBtn.btn.getTag().toString()));
         if (firstChoiseBtn.btn == null) {
             firstChoiseBtn = pressedBtn;
-            enableAllBtns();
+            GameLogic.enableAllBtns(allBtn);
         } else {
             if ((!firstChoiseBtn.btn.equals(pressedBtn.btn)) && (firstChoiseBtn.btn.getTag().toString().equals(pressedBtn.btn.getTag().toString()))) {
                 firstChoiseBtn.isStar = true;
@@ -84,7 +85,7 @@ public class Main3Activity extends AppCompatActivity {
                         firstChoiseBtn.btn.setImageResource(R.mipmap.ic_launcher);
                         pressedBtn.btn.setImageResource(R.mipmap.ic_launcher);
                         firstChoiseBtn = new MyBtn(null);
-                        enableAllBtns();
+                        GameLogic.enableAllBtns(allBtn);
                     }
                 }, 500);
             }
@@ -120,13 +121,13 @@ public class Main3Activity extends AppCompatActivity {
         allBtn[22].btn = (ImageButton) findViewById(R.id.button23);
         allBtn[23].btn = (ImageButton) findViewById(R.id.button24);
 
-        dealNewCards();
+        GameLogic.dealNewCards(imageList, allBtn);
     }
 
     private void correct() {
-        disableAllBtns();
+        GameLogic.disableAllBtns(allBtn);
         corrects += 1;
-        if (corrects == 12) {
+        if (corrects == NUM_OF_CARDS/2) {
             if (data.getBoolean(choose_level_Activity.TIMER))
                 countDown.cancel();
             winLose.setText(R.string.win_msg);
@@ -140,7 +141,7 @@ public class Main3Activity extends AppCompatActivity {
             }, 2000);
 
         }
-        enableAllBtns();
+        GameLogic.enableAllBtns(allBtn);
     }
 
     private void initImageList() {
@@ -169,33 +170,11 @@ public class Main3Activity extends AppCompatActivity {
         imageList.add(R.drawable.kenya_flag_icon);
         imageList.add(R.drawable.kenya_flag_icon);
 
-        shuffleImageList();
-    }
-
-    private void shuffleImageList() {
-        Collections.shuffle(imageList);
-    }
-
-    private void dealNewCards() {
-        for (int i = 0; i < allBtn.length; i++) {
-            allBtn[i].btn.setTag(imageList.get(i));
-        }
-    }
-
-    private void disableAllBtns() {
-        for (MyBtn btn : allBtn) {
-            btn.btn.setEnabled(false);
-        }
-    }
-
-    private void enableAllBtns() {
-        for (MyBtn btn : allBtn) {
-            btn.btn.setEnabled(true);
-        }
+        GameLogic.shuffleImageList(imageList);
     }
 
     private void timerLogic() {
-        countDown = new CountDownTimer(60000, 1000) {
+        countDown = new CountDownTimer(TIMER_LIMIT, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 timer.setText("" + millisUntilFinished / 1000);
