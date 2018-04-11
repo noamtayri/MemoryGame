@@ -6,4 +6,8 @@
     <string name="timer">Timer</string>
     <string name="win_msg">You Win</string>
     <string name="lose_msg">Time\'s Up</string>
+    <string name="enter_name">You must enter a name</string>
+    <string name="enter_age">You must enter an age</string>
+    <string name="positive_age">Age need to be positive</string>
+    <string name="big_age">I d\'ont think you are so old</string>
 </resources>
