@@ -16,6 +16,11 @@ import android.widget.TextView;
 public class choose_level_Activity extends AppCompatActivity {
 
     public static final String TIMER = "timer";
+    public static final String LEVEL = "level";
+    public static final int EASY = 1;
+    public static final int MEDIUM = 2;
+    public static final int HARD = 3;
+    public static final int REQUEST_CODE = 1;
 
     TextView welcomeTextView = null;
     TextView nameTextView = null;
@@ -57,23 +62,23 @@ public class choose_level_Activity extends AppCompatActivity {
     }
 
     private void playBtn(){
-        Intent intent = null;
+        Intent intent = new Intent(this, GameActivity.class);
         switch (spinner.getSelectedItem().toString()){
             case "easy":
-                intent = new Intent(this, Main2Activity.class);
+                intent.putExtra(LEVEL,EASY);
                 break;
             case "medium":
-                intent = new Intent(this, MainActivity.class);
+                intent.putExtra(LEVEL,MEDIUM);
                 break;
             case "hard":
-                intent = new Intent(this, Main3Activity.class);
+                intent.putExtra(LEVEL,HARD);
                 break;
             default:
                 break;
         }
         intent.putExtra(TIMER,checkBox.isChecked());
         intent.putExtra(HomeActivity.USER_NAME, userName);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     private void init(){
@@ -106,5 +111,17 @@ public class choose_level_Activity extends AppCompatActivity {
         spinner = (Spinner)findViewById(R.id.spinner);
         playBtn = (Button)findViewById(R.id.playButton);
         checkBox = (CheckBox)findViewById(R.id.timerCheckBox);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+            if(data.getBooleanExtra(GameActivity.RESULT,true))
+                welcomeTextView.setText(R.string.win_msg);
+            else
+                welcomeTextView.setText(R.string.lose_msg);
+        }else
+            welcomeTextView.setText(R.string.welcome);
     }
 }
