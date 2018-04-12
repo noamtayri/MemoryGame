@@ -143,16 +143,16 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void imageBtnClicked(final MyBtn pressedBtn) {
-        GameLogic.disableAllBtns(allBtn);
+        disableAllBtns();
         if (pressedBtn.isStar) {
-            GameLogic.enableAllBtns(allBtn);
+            enableAllBtns();
             return;
         }
 
         pressedBtn.btn.setImageResource(Integer.parseInt(pressedBtn.btn.getTag().toString()));
         if (firstChoiseBtn.btn == null) {
             firstChoiseBtn = pressedBtn;
-            GameLogic.enableAllBtns(allBtn);
+            enableAllBtns();
         } else {
             if ((!firstChoiseBtn.btn.equals(pressedBtn.btn)) && (firstChoiseBtn.btn.getTag().toString().equals(pressedBtn.btn.getTag().toString()))) {
                 firstChoiseBtn.isStar = true;
@@ -167,7 +167,7 @@ public class GameActivity extends AppCompatActivity {
                         firstChoiseBtn.btn.setImageResource(R.mipmap.ic_launcher);
                         pressedBtn.btn.setImageResource(R.mipmap.ic_launcher);
                         firstChoiseBtn = new MyBtn(null);
-                        GameLogic.enableAllBtns(allBtn);
+                        enableAllBtns();
                     }
                 }, 500);
             }
@@ -175,7 +175,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void correct() {
-        GameLogic.disableAllBtns(allBtn);
+        disableAllBtns();
         corrects += 1;
         if (corrects == btnAmount/2) {
             winLose = true;
@@ -193,7 +193,7 @@ public class GameActivity extends AppCompatActivity {
             }, 2000);
 
         }
-        GameLogic.enableAllBtns(allBtn);
+        enableAllBtns();
     }
 
     private void timerLogic() {
