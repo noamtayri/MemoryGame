@@ -3,15 +3,11 @@ package memorygame.com.memorygame;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 public class HomeActivity extends AppCompatActivity {
-
-    public static final String USER_NAME = "userName";
-    public static final String USER_AGE = "userAge";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +45,8 @@ public class HomeActivity extends AppCompatActivity {
             return;
         }
         Intent intent = new Intent(this, choose_level_Activity.class);
-        intent.putExtra(USER_NAME, name.getText().toString());
-        intent.putExtra(USER_AGE, age.getText().toString());
+        intent.putExtra(FinalVariables.USER_NAME, name.getText().toString());
+        intent.putExtra(FinalVariables.USER_AGE, age.getText().toString());
         startActivity(intent);
     }
 }

@@ -15,13 +15,6 @@ import android.widget.TextView;
 
 public class choose_level_Activity extends AppCompatActivity {
 
-    public static final String TIMER = "timer";
-    public static final String LEVEL = "level";
-    public static final int EASY = 1;
-    public static final int MEDIUM = 2;
-    public static final int HARD = 3;
-    public static final int REQUEST_CODE = 1;
-
     TextView welcomeTextView = null;
     TextView nameTextView = null;
     TextView difficultTextView = null;
@@ -41,8 +34,8 @@ public class choose_level_Activity extends AppCompatActivity {
         init();
 
         Bundle data = getIntent().getExtras();
-        userName = data.getString(HomeActivity.USER_NAME);
-        age = data.getString(HomeActivity.USER_AGE);
+        userName = data.getString(FinalVariables.USER_NAME);
+        age = data.getString(FinalVariables.USER_AGE);
 
         TextView name = (TextView)findViewById(R.id.nameTextView);
         name.setText(userName + ", " + age);
@@ -65,20 +58,20 @@ public class choose_level_Activity extends AppCompatActivity {
         Intent intent = new Intent(this, GameActivity.class);
         switch (spinner.getSelectedItem().toString()){
             case "easy":
-                intent.putExtra(LEVEL,EASY);
+                intent.putExtra(FinalVariables.LEVEL,FinalVariables.EASY);
                 break;
             case "medium":
-                intent.putExtra(LEVEL,MEDIUM);
+                intent.putExtra(FinalVariables.LEVEL,FinalVariables.MEDIUM);
                 break;
             case "hard":
-                intent.putExtra(LEVEL,HARD);
+                intent.putExtra(FinalVariables.LEVEL,FinalVariables.HARD);
                 break;
             default:
                 break;
         }
-        intent.putExtra(TIMER,checkBox.isChecked());
-        intent.putExtra(HomeActivity.USER_NAME, userName);
-        startActivityForResult(intent, REQUEST_CODE);
+        intent.putExtra(FinalVariables.TIMER,checkBox.isChecked());
+        intent.putExtra(FinalVariables.USER_NAME, userName);
+        startActivityForResult(intent, FinalVariables.REQUEST_CODE);
     }
 
     private void init(){
@@ -116,8 +109,8 @@ public class choose_level_Activity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
-            if(data.getBooleanExtra(GameActivity.RESULT,true))
+        if(requestCode == FinalVariables.REQUEST_CODE && resultCode == RESULT_OK){
+            if(data.getBooleanExtra(FinalVariables.RESULT,true))
                 welcomeTextView.setText(R.string.win_msg);
             else
                 welcomeTextView.setText(R.string.lose_msg);

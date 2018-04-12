@@ -5,6 +5,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -28,14 +29,13 @@ public class GameActivity extends AppCompatActivity {
     TextView nameTextView;
     TableLayout table;
     MyBtn[] allBtn;
-    MyBtn firstChoiseBtn = new MyBtn(null);
+    MyBtn firstChooseBtn = new MyBtn(null);
     int corrects = 0;
     List<Integer> allImagesList = new ArrayList<>();
     List<Integer> imageList = new ArrayList<>();
     CountDownTimer countDown;
     int timerLimit;
     Boolean winLose;
-    public static final String RESULT = "result";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,21 +118,21 @@ public class GameActivity extends AppCompatActivity {
 
     private void getData(){
         Bundle data = getIntent().getExtras();
-        name = data.getString(HomeActivity.USER_NAME);
-        timer = data.getBoolean(choose_level_Activity.TIMER);
-        level = data.getInt(choose_level_Activity.LEVEL);
+        name = data.getString(FinalVariables.USER_NAME);
+        timer = data.getBoolean(FinalVariables.TIMER);
+        level = data.getInt(FinalVariables.LEVEL);
         switch (level){
-            case choose_level_Activity.EASY:
+            case FinalVariables.EASY:
                 matrixSize = 2;
                 btnAmount = 4;
                 timerLimit = 30000;
                 break;
-            case choose_level_Activity.MEDIUM:
+            case FinalVariables.MEDIUM:
                 matrixSize = 4;
                 btnAmount = 16;
                 timerLimit = 45000;
                 break;
-            case choose_level_Activity.HARD:
+            case FinalVariables.HARD:
                 matrixSize = 5;
                 btnAmount = 24;
                 timerLimit = 60000;
@@ -150,23 +150,23 @@ public class GameActivity extends AppCompatActivity {
         }
 
         pressedBtn.btn.setImageResource(Integer.parseInt(pressedBtn.btn.getTag().toString()));
-        if (firstChoiseBtn.btn == null) {
-            firstChoiseBtn = pressedBtn;
+        if (firstChooseBtn.btn == null) {
+            firstChooseBtn = pressedBtn;
             enableAllBtns();
         } else {
-            if ((!firstChoiseBtn.btn.equals(pressedBtn.btn)) && (firstChoiseBtn.btn.getTag().toString().equals(pressedBtn.btn.getTag().toString()))) {
-                firstChoiseBtn.isStar = true;
+            if ((!firstChooseBtn.btn.equals(pressedBtn.btn)) && (firstChooseBtn.btn.getTag().toString().equals(pressedBtn.btn.getTag().toString()))) {
+                firstChooseBtn.isStar = true;
                 pressedBtn.isStar = true;
-                firstChoiseBtn = new MyBtn(null);
+                firstChooseBtn = new MyBtn(null);
                 correct();
             } else {
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        firstChoiseBtn.btn.setImageResource(R.mipmap.ic_launcher);
+                        firstChooseBtn.btn.setImageResource(R.mipmap.ic_launcher);
                         pressedBtn.btn.setImageResource(R.mipmap.ic_launcher);
-                        firstChoiseBtn = new MyBtn(null);
+                        firstChooseBtn = new MyBtn(null);
                         enableAllBtns();
                     }
                 }, 500);
@@ -186,7 +186,7 @@ public class GameActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     Intent resIntent = new Intent();
-                    resIntent.putExtra(RESULT, winLose);
+                    resIntent.putExtra(FinalVariables.RESULT, winLose);
                     setResult(RESULT_OK, resIntent);
                     finish();
                 }
@@ -212,7 +212,7 @@ public class GameActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Intent resIntent = new Intent();
-                        resIntent.putExtra(RESULT, winLose);
+                        resIntent.putExtra(FinalVariables.RESULT, winLose);
                         setResult(RESULT_OK, resIntent);
                         finish();
                     }
@@ -222,33 +222,32 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void initImageList() {
-        allImagesList.add(R.drawable.israel_flag_icon);
-        allImagesList.add(R.drawable.israel_flag_icon);
-        allImagesList.add(R.drawable.united_states_flag_icon);
-        allImagesList.add(R.drawable.united_states_flag_icon);
-        allImagesList.add(R.drawable.argentina_flag_icon);
-        allImagesList.add(R.drawable.argentina_flag_icon);
-        allImagesList.add(R.drawable.brazil_flag_icon);
-        allImagesList.add(R.drawable.brazil_flag_icon);
-        allImagesList.add(R.drawable.china_flag_icon);
-        allImagesList.add(R.drawable.china_flag_icon);
-        allImagesList.add(R.drawable.germany_flag_icon);
-        allImagesList.add(R.drawable.germany_flag_icon);
-        allImagesList.add(R.drawable.spain_flag_icon);
-        allImagesList.add(R.drawable.spain_flag_icon);
-        allImagesList.add(R.drawable.australia_flag_icon);
-        allImagesList.add(R.drawable.australia_flag_icon);
-        allImagesList.add(R.drawable.belgium_flag_icon);
-        allImagesList.add(R.drawable.belgium_flag_icon);
-        allImagesList.add(R.drawable.canada_flag_icon);
-        allImagesList.add(R.drawable.canada_flag_icon);
-        allImagesList.add(R.drawable.greece_flag_icon);
-        allImagesList.add(R.drawable.greece_flag_icon);
-        allImagesList.add(R.drawable.kenya_flag_icon);
-        allImagesList.add(R.drawable.kenya_flag_icon);
 
-        for(int i = 0 ; i<btnAmount ; i++)
+        allImagesList.add(R.drawable.israel_flag_icon);
+        allImagesList.add(R.drawable.united_states_flag_icon);
+        allImagesList.add(R.drawable.argentina_flag_icon);
+        allImagesList.add(R.drawable.brazil_flag_icon);
+        allImagesList.add(R.drawable.china_flag_icon);
+        allImagesList.add(R.drawable.germany_flag_icon);
+        allImagesList.add(R.drawable.spain_flag_icon);
+        allImagesList.add(R.drawable.australia_flag_icon);
+        allImagesList.add(R.drawable.belgium_flag_icon);
+        allImagesList.add(R.drawable.canada_flag_icon);
+        allImagesList.add(R.drawable.greece_flag_icon);
+        allImagesList.add(R.drawable.kenya_flag_icon);
+        allImagesList.add(R.drawable.croatian_flag_icon);
+        allImagesList.add(R.drawable.czech_republic_flag_icon);
+        allImagesList.add(R.drawable.england_flag_icon);
+        allImagesList.add(R.drawable.france_flag_icon);
+        allImagesList.add(R.drawable.italy_flag_icon);
+        allImagesList.add(R.drawable.japan_flag_icon);
+
+        Collections.shuffle(allImagesList);
+
+        for(int i = 0 ; i<btnAmount/2 ; i++){
             imageList.add(allImagesList.get(i));
+            imageList.add(allImagesList.get(i));
+        }
 
         Collections.shuffle(imageList);
     }
