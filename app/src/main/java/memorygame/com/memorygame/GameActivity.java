@@ -1,8 +1,13 @@
 package memorygame.com.memorygame;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,8 +22,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
-public class GameActivity extends AppCompatActivity {
+import memorygame.com.memorygame.AccelerometerService.SensorLocalBinder;
+
+public class GameActivity extends Activity {
 
     int level;
     String name;
@@ -30,12 +38,14 @@ public class GameActivity extends AppCompatActivity {
     TableLayout table;
     MyBtn[] allBtn;
     MyBtn firstChooseBtn = new MyBtn(null);
-    int corrects = 0;
+    public static int corrects = 0;
     List<Integer> allImagesList = new ArrayList<>();
     List<Integer> imageList = new ArrayList<>();
     CountDownTimer countDown;
     int timerLimit;
     Boolean winLose;
+    AccelerometerService as;
+    public static Stack<MyBtn> matchesStack = new Stack();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +69,33 @@ public class GameActivity extends AppCompatActivity {
             timerLogic();
 
     }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+
+        Intent i = new Intent(this, AccelerometerService.class);
+        bindService(i, sc, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        unbindService(sc);
+    }
+
+    private ServiceConnection sc = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            SensorLocalBinder binder = (SensorLocalBinder) service;
+            as = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
     private void fillTable() {
         for(int i = 0 ; i<matrixSize ; i++){
@@ -157,6 +194,8 @@ public class GameActivity extends AppCompatActivity {
             if ((!firstChooseBtn.btn.equals(pressedBtn.btn)) && (firstChooseBtn.btn.getTag().toString().equals(pressedBtn.btn.getTag().toString()))) {
                 firstChooseBtn.isStar = true;
                 pressedBtn.isStar = true;
+                matchesStack.push(firstChooseBtn);
+                matchesStack.push(pressedBtn);
                 firstChooseBtn = new MyBtn(null);
                 correct();
             } else {
@@ -267,6 +306,18 @@ public class GameActivity extends AppCompatActivity {
     public void enableAllBtns() {
         for (MyBtn btn : allBtn) {
             btn.btn.setEnabled(true);
+        }
+    }
+
+    public static void turnBack(){
+        if(!matchesStack.isEmpty()){
+            MyBtn temp1 = matchesStack.pop();
+            MyBtn temp2 = matchesStack.pop();
+            temp1.isStar = false;
+            temp2.isStar = false;
+            temp1.btn.setImageResource(R.mipmap.ic_launcher);
+            temp2.btn.setImageResource(R.mipmap.ic_launcher);
+            corrects -= 1;
         }
     }
 }
