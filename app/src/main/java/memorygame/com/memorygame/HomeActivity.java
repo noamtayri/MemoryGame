@@ -22,7 +22,13 @@ public class HomeActivity extends AppCompatActivity {
                 nextBtn();
             }
         });
-
+        final Button recordsBtn = (Button) findViewById(R.id.recordsButton);
+        recordsBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this, RecordsActivity.class));
+            }
+        });
     }
 
     private void nextBtn(){
