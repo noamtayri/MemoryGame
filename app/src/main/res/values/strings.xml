@@ -10,4 +10,7 @@
     <string name="enter_age">You must enter an age</string>
     <string name="positive_age">Age need to be positive</string>
     <string name="big_age">I d\'ont think you are so old</string>
+    <string name="title_activity_records">RecordsActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>
