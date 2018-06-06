@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TableLayout;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Stack;
 
 import memorygame.com.memorygame.AccelerometerService.SensorLocalBinder;
+import tyrantgit.explosionfield.ExplosionField;
 
 public class GameActivity extends Activity {
 
@@ -38,7 +41,7 @@ public class GameActivity extends Activity {
     TableLayout table;
     MyBtn[] allBtn;
     MyBtn firstChooseBtn = new MyBtn(null);
-    public static int corrects = 0;
+    public static int corrects;
     List<Integer> allImagesList = new ArrayList<>();
     List<Integer> imageList = new ArrayList<>();
     CountDownTimer countDown;
@@ -46,6 +49,9 @@ public class GameActivity extends Activity {
     Boolean winLose;
     AccelerometerService as;
     public static Stack<MyBtn> matchesStack = new Stack();
+    ExplosionField ex;
+    final Animation animation = new RotateAnimation(0.0f,360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +74,8 @@ public class GameActivity extends Activity {
         if(timer)
             timerLogic();
 
+        corrects = 0;
+        ex = ExplosionField.attach2Window(this);
     }
 
     @Override
@@ -220,6 +228,10 @@ public class GameActivity extends Activity {
             winLose = true;
             if (timer)
                 countDown.cancel();
+            animation.setDuration(1999);
+            for (MyBtn btn : allBtn) {
+                btn.btn.startAnimation(animation);
+            }
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -246,6 +258,9 @@ public class GameActivity extends Activity {
             public void onFinish() {
                 winLose = false;
                 timeTextView.setText("0");
+                for (MyBtn btn : allBtn) {
+                    ex.explode(btn.btn);
+                }
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -310,7 +325,8 @@ public class GameActivity extends Activity {
     }
 
     public static void turnBack(){
-        if(!matchesStack.isEmpty()){
+        //if(!matchesStack.isEmpty()){
+        if(corrects > 0){
             MyBtn temp1 = matchesStack.pop();
             MyBtn temp2 = matchesStack.pop();
             temp1.isStar = false;
