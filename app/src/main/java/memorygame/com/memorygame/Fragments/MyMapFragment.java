@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import memorygame.com.memorygame.Dal.DBHandler;
 import memorygame.com.memorygame.Model.Record;
 import memorygame.com.memorygame.R;
 import memorygame.com.memorygame.RecordsActivity;
@@ -42,7 +43,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
     private LatLng mLastLocation;
     private FusedLocationProviderClient mFusedLocationClient;
 
-    // region CtorsAndInits
+    // region Ctors And Inits
     public MyMapFragment() {
     }
 
@@ -76,7 +77,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
 
     // endregion
 
-    // region locationPermission
+    // region location Permission
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -110,7 +111,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
 
     //endregion
 
-    //region OverrideFragmentMethods
+    //region Override Fragment Methods
     @Override
     public void onResume() {
         super.onResume();
@@ -137,7 +138,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
 
     //endregion
 
-    // region mapCallBacks
+    // region map CallBacks
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -213,10 +214,11 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    //region retrieveRecords
+    //region retrieve Records
 
         protected class LoadRecordsAsync extends AsyncTask<Void, Void, Void> {
         //final String Tag = LoadRecordsAsync.class.getSimpleName();
+        DBHandler db;
 
         public LoadRecordsAsync(){
         }
@@ -224,6 +226,8 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
         @Override
         protected Void doInBackground(Void... params) {
             //recordsList = retrieve records from db
+
+            //recordsList = db.getAllRecords();
 
             // but for now...
             for(int i = 0; i < 50; i++)
@@ -235,6 +239,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            db = RecordsActivity.dbRecords;
         }
 
         // -- called as soon as doInBackground method completes

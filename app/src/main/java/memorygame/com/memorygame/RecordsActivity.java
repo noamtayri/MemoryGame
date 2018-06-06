@@ -1,5 +1,6 @@
 package memorygame.com.memorygame;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import memorygame.com.memorygame.Dal.DBHandler;
 import memorygame.com.memorygame.Fragments.*;
 
 public class RecordsActivity extends AppCompatActivity {
@@ -32,6 +34,7 @@ public class RecordsActivity extends AppCompatActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
+    public static DBHandler dbRecords;
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -44,6 +47,8 @@ public class RecordsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_records);
+
+        dbRecords = new DBHandler(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,7 +77,6 @@ public class RecordsActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
     }
 
 
