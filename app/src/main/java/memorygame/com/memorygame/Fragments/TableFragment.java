@@ -2,15 +2,20 @@ package memorygame.com.memorygame.Fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import memorygame.com.memorygame.Adapter.RecordsAdapter;
 import memorygame.com.memorygame.Dal.DBHandler;
 import memorygame.com.memorygame.Model.Record;
 import memorygame.com.memorygame.R;
@@ -22,6 +27,9 @@ public class TableFragment extends Fragment {
      * fragment.
      */
     private List<Record> recordsList = new ArrayList<>();
+    RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+    RecordsAdapter adapter;
 
     // region Ctors And Inits
     public TableFragment() {
@@ -43,51 +51,24 @@ public class TableFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_records, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        textView.setText(getString(R.string.section_format, getArguments().getInt(RecordsActivity.ARG_SECTION_NUMBER)));
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_recycler_records);
+
+        initRecycler();
+        showRecords();
+
         return rootView;
+    }
+
+    private void initRecycler() {
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
     }
 
     //endregion
     private void showRecords() {
+        adapter = new RecordsAdapter(((RecordsActivity)getActivity()).activityRecordsList);
+        recyclerView.setAdapter(adapter);
     }
 
-
-    //region retrieveRecords
-
-    protected class LoadRecordsAsync extends AsyncTask<Void, Void, Void> {
-        //final String Tag = LoadRecordsAsync.class.getSimpleName();
-        DBHandler db;
-
-        public LoadRecordsAsync(){
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            //recordsList = retrieve records from db
-
-            //recordsList = db.getAllRecords();
-
-            // but for now...
-            for(int i = 0; i < 50; i++)
-                recordsList.add(new Record());
-            return null;
-        }
-
-        // -- gets called just before thread begins
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            db = RecordsActivity.dbRecords;
-        }
-
-        // -- called as soon as doInBackground method completes
-        @Override
-        protected void onPostExecute(Void v) {
-            super.onPostExecute(v);
-            showRecords();
-        }
-    }
-
-    //endregion
 }

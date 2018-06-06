@@ -2,10 +2,11 @@ package memorygame.com.memorygame.Fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -26,10 +27,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 
 import memorygame.com.memorygame.Dal.DBHandler;
+import memorygame.com.memorygame.GameActivity;
 import memorygame.com.memorygame.Model.Record;
 import memorygame.com.memorygame.R;
 import memorygame.com.memorygame.RecordsActivity;
@@ -40,6 +45,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     private GoogleMap mMap;
     private List<Record> recordsList = new ArrayList<>();
+
     private LatLng mLastLocation;
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -61,6 +67,8 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
+
+        recordsList = ((RecordsActivity)getActivity()).activityRecordsList;
 
         //mMapView.onResume(); // needed to get the map to display immediately
 
@@ -146,109 +154,77 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
         //mMap.setMyLocationEnabled(true);
         checkPermissions();
 
-        LoadRecordsAsync loadRecordsAsync = new LoadRecordsAsync();
-        loadRecordsAsync.execute();
+        showRecords();
+    }
+
+    // endregion
+
+    //region GUI methods
+
+    private void showRecords() {
+        for (Record rec : recordsList) {
+            mMap.addMarker(new MarkerOptions()
+                    .position(rec.getLocation())
+                    .title(String.valueOf(rec.getRecordPoints()) + "\t-\t" +rec.getName())
+                    .snippet(rec.getAddress()));
+        }
 
         getMyLocation();
+        //LatLng lastRecord = recordsList.get(recordsList.size() - 1).getLocation();
+        //CameraPosition cameraPosition = new CameraPosition.Builder().target(lastRecord).zoom(12).build();
+        //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         /*
-        // For dropping a marker at a point on the Map
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
-
-        // For zooming automatically to the location of the marker
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build(); // see zoom comment
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        zoom:
+            1: World
+            5: Landmass/continent
+            10: City
+            15: Streets
+            20: Buildings
         */
     }
 
     // endregion
 
-    /*
-    zoom:
-        1: World
-        5: Landmass/continent
-        10: City
-        15: Streets
-        20: Buildings
-    */
-
-
-    private void showRecords() {
-        for (Record rec : recordsList) {
-            mMap.addMarker(new MarkerOptions().position(rec.getLocation()).title(rec.getRecordDesc()).snippet("Record Description"));
-        }
-        LatLng lastRecord = recordsList.get(recordsList.size() - 1).getLocation();
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(lastRecord).zoom(12).build();
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
+    //region My Location
 
     public void getMyLocation() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         else{
-        mFusedLocationClient.getLastLocation().addOnSuccessListener(
-                new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                            mMap.addMarker(new MarkerOptions().position(mLastLocation).title("My Location").snippet("Marker Description"));
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(
+                    new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+                                String address = "";
+                                try {
+                                    List<Address> addressList = geocoder.getFromLocation(mLastLocation.latitude, mLastLocation.longitude, 1);
+                                    if (addressList.size() > 0) {
+                                        String addressLine = addressList.get(0).getAddressLine(0);
 
-                            CameraPosition cameraPosition = new CameraPosition.Builder().target(mLastLocation).zoom(12).build(); // see zoom comment
-                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                            /*
-                            mLocationTextView.setText(
-                                    getString(R.string.location_text,
-                                            mLastLocation.getLatitude(),
-                                            mLastLocation.getLongitude(),
-                                            mLastLocation.getTime()));
-                                            */
-                        } else {
-                            //mLocationTextView.setText(R.string.no_location);
+                                        mMap.addMarker(new MarkerOptions()
+                                                .position(mLastLocation)
+                                                .title("My Location")
+                                                .snippet(addressLine));
+                                        CameraPosition cameraPosition = new CameraPosition.Builder().target(mLastLocation).zoom(12).build();
+                                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                //mLocationTextView.setText(R.string.no_location);
+                            }
                         }
-                    }
-                });
+                    });
         }
     }
-
-    //region retrieve Records
-
-        protected class LoadRecordsAsync extends AsyncTask<Void, Void, Void> {
-        //final String Tag = LoadRecordsAsync.class.getSimpleName();
-        DBHandler db;
-
-        public LoadRecordsAsync(){
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            //recordsList = retrieve records from db
-
-            //recordsList = db.getAllRecords();
-
-            // but for now...
-            for(int i = 0; i < 50; i++)
-                recordsList.add(new Record());
-            return null;
-        }
-
-        // -- gets called just before thread begins
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            db = RecordsActivity.dbRecords;
-        }
-
-        // -- called as soon as doInBackground method completes
-        @Override
-        protected void onPostExecute(Void v) {
-            super.onPostExecute(v);
-            showRecords();
-        }
-    }
-
     //endregion
 }

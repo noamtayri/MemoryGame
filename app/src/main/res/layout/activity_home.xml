@@ -5,70 +5,69 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="memorygame.com.memorygame.HomeActivity"
-    tools:layout_editor_absoluteY="81dp"
-    tools:layout_editor_absoluteX="0dp">
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="81dp">
 
     <Button
         android:id="@+id/recordsButton"
-        android:layout_width="120dp"
-        android:layout_height="100dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="137dp"
+        android:layout_height="87dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:text="records"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/nextButton" />
 
     <TextView
         android:id="@+id/headTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:fontFamily="sans-serif-smallcaps"
         android:text="@string/app_name"
         android:textSize="48sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/nameEditText"
-        android:layout_marginTop="0dp"
-        app:layout_constraintVertical_bias="0.52" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/nameEditText"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Name"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:inputType="textPersonName"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headTextView"
-        app:layout_constraintBottom_toTopOf="@+id/ageEditText" />
+        app:layout_constraintBottom_toTopOf="@+id/ageEditText"
+        app:layout_constraintTop_toBottomOf="@+id/headTextView" />
 
     <Button
         android:id="@+id/nextButton"
         android:layout_width="170dp"
         android:layout_height="100dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:text="next"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/recordsButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ageEditText" />
 
     <EditText
         android:id="@+id/ageEditText"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="age"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:inputType="number"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameEditText"
-        app:layout_constraintBottom_toTopOf="@+id/nextButton" />
+        app:layout_constraintBottom_toTopOf="@+id/nextButton"
+        app:layout_constraintTop_toBottomOf="@+id/nameEditText" />
 
 </android.support.constraint.ConstraintLayout>

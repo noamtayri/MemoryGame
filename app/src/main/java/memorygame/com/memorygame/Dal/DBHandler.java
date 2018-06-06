@@ -28,8 +28,8 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_NAME = "name";
     private static final String KEY_LATITUDE = "latitude";
     private static final String KEY_LONGITUDE = "longitude";
-    private static final String KEY_DESCRIPTION = "description";
-    private static final String KEY_DATE = "date";
+    private static final String KEY_POINTS = "points";
+    private static final String KEY_ADDRESS = "address";
 
     public DBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -45,8 +45,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_NAME + " TEXT,"
                 + KEY_LATITUDE + " REAL,"
                 + KEY_LONGITUDE + " REAL,"
-                + KEY_DESCRIPTION + " TEXT,"
-                + KEY_DATE + " TEXT " + ")";
+                + KEY_POINTS + " INTEGER,"
+                + KEY_ADDRESS + " TEXT " + ")";
 
         db.execSQL(CREATE_STUDENT_DETAIL_TABLE);
 
@@ -69,7 +69,7 @@ public class DBHandler extends SQLiteOpenHelper {
      */
 
     // Adding new Student Information
-    void addNewRecord(Record newRec) {
+    public void addNewRecord(Record newRec) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -78,8 +78,8 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_NAME, newRec.getName());
         values.put(KEY_LATITUDE, newRec.getLocation().latitude);
         values.put(KEY_LONGITUDE, newRec.getLocation().longitude);
-        values.put(KEY_DESCRIPTION, newRec.getRecordDesc());
-        values.put(KEY_DATE, newRec.getRecordDate());
+        values.put(KEY_POINTS, newRec.getRecordPoints());
+        values.put(KEY_ADDRESS, newRec.getAddress());
 
 
         // Inserting Row
@@ -97,11 +97,11 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public Record getRecord(int id){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_RECORD_DETAIL,new String[]{KEY_ID,KEY_NAME,KEY_LATITUDE,KEY_LONGITUDE,KEY_DESCRIPTION,KEY_DATE},KEY_ID+"=?",
+        Cursor cursor = db.query(TABLE_RECORD_DETAIL,new String[]{KEY_ID,KEY_NAME,KEY_LATITUDE,KEY_LONGITUDE, KEY_POINTS},KEY_ID+"=?",
                 new String[]{String.valueOf(id)},null,null,null,null);
         if(cursor != null)
             cursor.moveToFirst();
-        return new Record(cursor.getInt(0),cursor.getString(1),cursor.getDouble(2),cursor.getDouble(3),cursor.getString(4),cursor.getString(5));
+        return new Record(cursor.getInt(0),cursor.getString(1),cursor.getDouble(2),cursor.getDouble(3),cursor.getInt(4),cursor.getString(5));
 
     }
 
@@ -124,8 +124,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 rec.setName(cursor.getString(1));
                 rec.setLatitude(Double.parseDouble(cursor.getString(2)));
                 rec.setLongitude(Double.parseDouble(cursor.getString(3)));
-                rec.setRecordDesc(cursor.getString(4));
-                rec.setRecordDate(cursor.getString(5));
+                rec.setRecordPoints(cursor.getInt(4));
+                rec.setAddress(cursor.getString(5));
 
                 // Adding contact to list
                 recordList.add(rec);

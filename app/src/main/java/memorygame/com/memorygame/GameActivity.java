@@ -1,13 +1,19 @@
 package memorygame.com.memorygame;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,13 +26,26 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Stack;
 
 import memorygame.com.memorygame.AccelerometerService.SensorLocalBinder;
+import memorygame.com.memorygame.Dal.DBHandler;
+import memorygame.com.memorygame.Model.Record;
 import tyrantgit.explosionfield.ExplosionField;
 
 public class GameActivity extends Activity {
@@ -48,10 +67,13 @@ public class GameActivity extends Activity {
     int timerLimit;
     Boolean winLose;
     AccelerometerService as;
-    public static Stack<MyBtn> matchesStack = new Stack();
+    public static Stack<MyBtn> matchesStack = new Stack<>();
     ExplosionField ex;
     final Animation animation = new RotateAnimation(0.0f,360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 
+    private LatLng mLastLocation;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private DBHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,6 +254,7 @@ public class GameActivity extends Activity {
             for (MyBtn btn : allBtn) {
                 btn.btn.startAnimation(animation);
             }
+            if(timer) getLocationAndSave();
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -242,7 +265,6 @@ public class GameActivity extends Activity {
                     finish();
                 }
             }, 2000);
-
         }
         enableAllBtns();
     }
@@ -335,5 +357,59 @@ public class GameActivity extends Activity {
             temp2.btn.setImageResource(R.mipmap.ic_launcher);
             corrects -= 1;
         }
+    }
+
+    //region Location and DB
+    public void getLocationAndSave() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(GameActivity.this);
+        if (ActivityCompat.checkSelfPermission(GameActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(GameActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        else{
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(
+                    new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                Geocoder geocoder = new Geocoder(GameActivity.this, Locale.getDefault());
+                                try {
+                                    List<Address> addressList = geocoder.getFromLocation(mLastLocation.latitude, mLastLocation.longitude, 1);
+                                    if (addressList.size() > 0) {
+                                        String addressLine = addressList.get(0).getAddressLine(0);
+
+                                        saveRecordToDB(mLastLocation, addressLine);
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                //mLocationTextView.setText(R.string.no_location);
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void saveRecordToDB(final LatLng mLastLocation, final String addressLine) {
+        db = new DBHandler(this);
+        final int points = calculatePoints();
+
+        new Runnable() {
+            @Override
+            public void run() {
+                db.addNewRecord(new Record(name, mLastLocation.latitude, mLastLocation.longitude, points, addressLine));
+                db.close();
+                Toast.makeText(GameActivity.this, "saved to db. location: " + addressLine, Toast.LENGTH_SHORT).show();
+            }
+        }.run();
+    }
+
+    //endregion
+
+    private int calculatePoints() {
+        int secondsLeft = Integer.parseInt(timeTextView.getText().toString());
+        return secondsLeft * level + level;
     }
 }

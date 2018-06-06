@@ -1,6 +1,7 @@
 package memorygame.com.memorygame;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
@@ -23,6 +25,7 @@ import java.util.List;
 
 import memorygame.com.memorygame.Dal.DBHandler;
 import memorygame.com.memorygame.Fragments.*;
+import memorygame.com.memorygame.Model.Record;
 
 public class RecordsActivity extends AppCompatActivity {
 
@@ -35,13 +38,14 @@ public class RecordsActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     public static DBHandler dbRecords;
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    public SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
+    public ViewPager mViewPager;
     public static final String ARG_SECTION_NUMBER = "section_number";
+    public List<Record> activityRecordsList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +66,10 @@ public class RecordsActivity extends AppCompatActivity {
         mSectionsPagerAdapter.addFragment(tableFragment, "RECORDS TABLE");
         mSectionsPagerAdapter.addFragment(mapFragment, "RECORDS MAP");
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        LoadRecordsAsync loadRecordsAsync = new LoadRecordsAsync();
+        loadRecordsAsync.execute();
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +78,7 @@ public class RecordsActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        */
     }
 
 
@@ -148,6 +150,44 @@ public class RecordsActivity extends AppCompatActivity {
             }
             return null;
             */
+        }
+    }
+
+    protected class LoadRecordsAsync extends AsyncTask<Void, Void, Void> {
+        //final String Tag = LoadRecordsAsync.class.getSimpleName();
+
+        public LoadRecordsAsync(){
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //recordsList = retrieve records from db
+
+            activityRecordsList = dbRecords.getAllRecords();
+
+            // but for now...
+            //for(int i = 0; i < 20; i++)
+              //  activityRecordsList.add(new Record(RecordsActivity.this));
+            return null;
+        }
+
+        // -- gets called just before thread begins
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        // -- called as soon as doInBackground method completes
+        @Override
+        protected void onPostExecute(Void v) {
+            super.onPostExecute(v);
+
+            // Set up the ViewPager with the sections adapter.
+            mViewPager = (ViewPager) findViewById(R.id.container);
+            mViewPager.setAdapter(mSectionsPagerAdapter);
+
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+            tabLayout.setupWithViewPager(mViewPager);
         }
     }
 }
