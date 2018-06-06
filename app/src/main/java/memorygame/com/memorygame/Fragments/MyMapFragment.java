@@ -2,15 +2,20 @@ package memorygame.com.memorygame.Fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -19,6 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +39,10 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     private GoogleMap mMap;
     private List<Record> recordsList = new ArrayList<>();
+    private LatLng mLastLocation;
+    private FusedLocationProviderClient mFusedLocationClient;
 
+    // region CtorsAndInits
     public MyMapFragment() {
     }
 
@@ -65,6 +74,9 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
         return rootView;
     }
 
+    // endregion
+
+    // region locationPermission
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -85,8 +97,9 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 {
                     if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED)
+                            == PackageManager.PERMISSION_GRANTED) {
                         mMap.setMyLocationEnabled(true);
+                    }
                 }
             } else {
                 mMap.setMyLocationEnabled(false);
@@ -95,6 +108,9 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    //endregion
+
+    //region OverrideFragmentMethods
     @Override
     public void onResume() {
         super.onResume();
@@ -119,10 +135,12 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
         mMapView.onLowMemory();
     }
 
+    //endregion
+
+    // region mapCallBacks
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         // For showing a move to my location button
         //mMap.setMyLocationEnabled(true);
         checkPermissions();
@@ -130,6 +148,9 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
         LoadRecordsAsync loadRecordsAsync = new LoadRecordsAsync();
         loadRecordsAsync.execute();
 
+        getMyLocation();
+
+        /*
         // For dropping a marker at a point on the Map
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
@@ -137,32 +158,64 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
         // For zooming automatically to the location of the marker
         CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build(); // see zoom comment
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-        /*
-        zoom:
-            1: World
-            5: Landmass/continent
-            10: City
-            15: Streets
-            20: Buildings
         */
     }
+
+    // endregion
+
+    /*
+    zoom:
+        1: World
+        5: Landmass/continent
+        10: City
+        15: Streets
+        20: Buildings
+    */
 
 
     private void showRecords() {
         for (Record rec : recordsList) {
-            mMap.addMarker(new MarkerOptions().position(rec.getLocation()).title(rec.getTheRecord___()).snippet("Record Description"));
+            mMap.addMarker(new MarkerOptions().position(rec.getLocation()).title(rec.getRecordDesc()).snippet("Record Description"));
         }
-        LatLng lastRecord = recordsList.get(recordsList.size()-1).getLocation();
+        LatLng lastRecord = recordsList.get(recordsList.size() - 1).getLocation();
         CameraPosition cameraPosition = new CameraPosition.Builder().target(lastRecord).zoom(12).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    public void getMyLocation() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        else{
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(
+                new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            mMap.addMarker(new MarkerOptions().position(mLastLocation).title("My Location").snippet("Marker Description"));
 
-    /*
-    retrieve
-     */
-    protected class LoadRecordsAsync extends AsyncTask<Void, Void, Void> {
+                            CameraPosition cameraPosition = new CameraPosition.Builder().target(mLastLocation).zoom(12).build(); // see zoom comment
+                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                            /*
+                            mLocationTextView.setText(
+                                    getString(R.string.location_text,
+                                            mLastLocation.getLatitude(),
+                                            mLastLocation.getLongitude(),
+                                            mLastLocation.getTime()));
+                                            */
+                        } else {
+                            //mLocationTextView.setText(R.string.no_location);
+                        }
+                    }
+                });
+        }
+    }
+
+    //region retrieveRecords
+
+        protected class LoadRecordsAsync extends AsyncTask<Void, Void, Void> {
         //final String Tag = LoadRecordsAsync.class.getSimpleName();
 
         public LoadRecordsAsync(){
@@ -191,4 +244,6 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
             showRecords();
         }
     }
+
+    //endregion
 }
