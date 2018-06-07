@@ -34,6 +34,7 @@ import java.util.Locale;
 
 
 import memorygame.com.memorygame.Dal.DBHandler;
+import memorygame.com.memorygame.FinalVariables;
 import memorygame.com.memorygame.GameActivity;
 import memorygame.com.memorygame.Model.Record;
 import memorygame.com.memorygame.R;
@@ -41,7 +42,7 @@ import memorygame.com.memorygame.RecordsActivity;
 
 public class MyMapFragment extends Fragment implements OnMapReadyCallback {
 
-    private int MY_LOCATION_REQUEST_CODE = 1;
+
     MapView mMapView;
     private GoogleMap mMap;
     private List<Record> recordsList = new ArrayList<>();
@@ -94,13 +95,13 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
             requestPermissions(new String[]{
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION
-            }, MY_LOCATION_REQUEST_CODE);
+            }, FinalVariables.MY_LOCATION_REQUEST_CODE);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == MY_LOCATION_REQUEST_CODE) {
+        if (requestCode == FinalVariables.MY_LOCATION_REQUEST_CODE) {
             if (permissions.length == 1 &&
                     permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -163,10 +164,11 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
 
     private void showRecords() {
         for (Record rec : recordsList) {
-            mMap.addMarker(new MarkerOptions()
-                    .position(rec.getLocation())
-                    .title(String.valueOf(rec.getRecordPoints()) + "\t-\t" +rec.getName())
-                    .snippet(rec.getAddress()));
+            if(rec.getLocation().latitude != -1)
+                mMap.addMarker(new MarkerOptions()
+                        .position(rec.getLocation())
+                        .title(String.valueOf(rec.getRecordPoints()) + "\t-\t" +rec.getName())
+                        .snippet(rec.getAddress()));
         }
 
         getMyLocation();
@@ -202,7 +204,6 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
                             if (location != null) {
                                 mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
                                 Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-                                String address = "";
                                 try {
                                     List<Address> addressList = geocoder.getFromLocation(mLastLocation.latitude, mLastLocation.longitude, 1);
                                     if (addressList.size() > 0) {

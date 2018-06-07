@@ -1,6 +1,14 @@
 package memorygame.com.memorygame;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +20,16 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class choose_level_Activity extends AppCompatActivity {
 
@@ -24,6 +42,10 @@ public class choose_level_Activity extends AppCompatActivity {
     String userName;
     String age;
 
+    private boolean locPermission = false;
+    private LatLng mLastLocation;
+    private FusedLocationProviderClient mFusedLocationClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +53,7 @@ public class choose_level_Activity extends AppCompatActivity {
 
         bindUI();
 
-        init();
+        //init();
 
         Bundle data = getIntent().getExtras();
         userName = data.getString(FinalVariables.USER_NAME);
@@ -44,6 +66,9 @@ public class choose_level_Activity extends AppCompatActivity {
 
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, levels);
         spinner.setAdapter(adapter);
+
+        checkPermissions();
+        getCurrentLocation();
 
         Button play = (Button)findViewById(R.id.playButton);
         play.setOnClickListener(new View.OnClickListener(){
@@ -69,6 +94,7 @@ public class choose_level_Activity extends AppCompatActivity {
             default:
                 break;
         }
+        intent.putExtra(FinalVariables.LOCATION_PERM, locPermission);
         intent.putExtra(FinalVariables.TIMER,checkBox.isChecked());
         intent.putExtra(FinalVariables.USER_NAME, userName);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -117,4 +143,74 @@ public class choose_level_Activity extends AppCompatActivity {
         }else
             welcomeTextView.setText(R.string.welcome);
     }
+
+    // region Location and Permission
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locPermission = true;
+            init();
+
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            }, FinalVariables.MY_LOCATION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == FinalVariables.MY_LOCATION_REQUEST_CODE) {
+            if (permissions.length == 1 &&
+                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                {
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        locPermission  = true;
+                    }
+                }
+            } else {
+                locPermission = false;
+                // Permission was denied. can't get user location.
+            }
+            init();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getCurrentLocation() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(choose_level_Activity.this);
+        if (!locPermission){
+            return;
+        }
+        else{
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(
+                    new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                Geocoder geocoder = new Geocoder(choose_level_Activity.this, Locale.getDefault());
+                                try {
+                                    List<Address> addressList = geocoder.getFromLocation(mLastLocation.latitude, mLastLocation.longitude, 1);
+                                    if (addressList.size() > 0) {
+                                        String addressLine = addressList.get(0).getAddressLine(0);
+
+                                        //Toast.makeText(choose_level_Activity.this, "got location: " + addressLine, Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                //mLocationTextView.setText(R.string.no_location);
+                            }
+                        }
+                    });
+        }
+
+    }
+
+    //endregion
 }

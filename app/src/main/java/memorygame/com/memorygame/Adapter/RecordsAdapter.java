@@ -14,12 +14,12 @@ import memorygame.com.memorygame.R;
 
 class RecordViewHolder extends RecyclerView.ViewHolder {
 
-    public TextView points, name, address;
+    public TextView title, name, address;
     protected double latitude, longitude;
 
     public RecordViewHolder(View itemView) {
         super(itemView);
-        points = (TextView) itemView.findViewById(R.id.item_points);
+        title = (TextView) itemView.findViewById(R.id.item_title);
         name = (TextView) itemView.findViewById(R.id.item_name);
         address = (TextView) itemView.findViewById(R.id.item_address);
     }
@@ -54,7 +54,10 @@ public class RecordsAdapter extends RecyclerView.Adapter<RecordViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecordViewHolder holder, int position) {
-        holder.points.setText(String.valueOf(records.get(position).getRecordPoints()));
+        holder.title.setText(
+                records.get(position).getLevel()
+                .concat(":  ")
+                .concat(String.valueOf(records.get(position).getRecordPoints())));
         holder.name.setText(records.get(position).getName());
         holder.address.setText(records.get(position).getAddress());
         holder.latitude = records.get(position).getLocation().latitude;

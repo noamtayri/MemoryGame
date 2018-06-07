@@ -7,38 +7,26 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.Calendar;
 
 public class Record {
-    private int id;
-    private String name;
-    private double latitude;
-    private double longitude;
-    private String address;
-    private int recordPoints;
-
-    Calendar cal = Calendar.getInstance();
+    private int id, recordPoints;
+    private String name, address, level;
+    private double latitude, longitude;
 
     //testing constructor
     public Record(){
 
     }
 
-    public Record(Context context) {
-        this.name = "abc";
-        this.latitude = Math.random() * 100;
-        this.longitude = Math.random() * 100;
-        this.recordPoints = (int)(Math.random() * 50);
-        this.address = "raanana";
-    }
-
-    public Record(String name, double latitude, double longitude, int recordPoints, String address) {
+    public Record(String name, double latitude, double longitude, int recordPoints, String address, String level) {
 
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.recordPoints = recordPoints;
         this.address = address;
+        this.level = level;
     }
 
-    public Record(int id, String name, double latitude, double longitude, int recordPoints, String address) {
+    public Record(int id, String name, double latitude, double longitude, int recordPoints, String address, String level) {
 
         this.id = id;
         this.name = name;
@@ -46,6 +34,7 @@ public class Record {
         this.longitude = longitude;
         this.recordPoints = recordPoints;
         this.address = address;
+        this.level = level;
     }
 
     public int getId() {
@@ -89,5 +78,13 @@ public class Record {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 }

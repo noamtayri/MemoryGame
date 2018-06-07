@@ -1,6 +1,7 @@
 package memorygame.com.memorygame;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,7 +14,9 @@ import android.location.Location;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +37,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
@@ -51,7 +55,7 @@ import tyrantgit.explosionfield.ExplosionField;
 public class GameActivity extends Activity {
 
     int level;
-    String name;
+    String name, myAddress;
     Boolean timer;
     int matrixSize;
     int btnAmount;
@@ -71,6 +75,7 @@ public class GameActivity extends Activity {
     ExplosionField ex;
     final Animation animation = new RotateAnimation(0.0f,360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 
+    private boolean locPermission = false;
     private LatLng mLastLocation;
     private FusedLocationProviderClient mFusedLocationClient;
     private DBHandler db;
@@ -92,6 +97,8 @@ public class GameActivity extends Activity {
         initImageList();
 
         dealNewCards();
+
+        getCurrentLocation();
 
         if(timer)
             timerLogic();
@@ -188,6 +195,7 @@ public class GameActivity extends Activity {
         name = data.getString(FinalVariables.USER_NAME);
         timer = data.getBoolean(FinalVariables.TIMER);
         level = data.getInt(FinalVariables.LEVEL);
+        locPermission = data.getBoolean(FinalVariables.LOCATION_PERM);
         switch (level){
             case FinalVariables.EASY:
                 matrixSize = 2;
@@ -254,7 +262,7 @@ public class GameActivity extends Activity {
             for (MyBtn btn : allBtn) {
                 btn.btn.startAnimation(animation);
             }
-            if(timer) getLocationAndSave();
+            if(timer) saveRecordToDB();
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -360,10 +368,10 @@ public class GameActivity extends Activity {
     }
 
     //region Location and DB
-    public void getLocationAndSave() {
+    @SuppressLint("MissingPermission")
+    private void getCurrentLocation() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(GameActivity.this);
-        if (ActivityCompat.checkSelfPermission(GameActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(GameActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (!locPermission){
             return;
         }
         else{
@@ -379,7 +387,9 @@ public class GameActivity extends Activity {
                                     if (addressList.size() > 0) {
                                         String addressLine = addressList.get(0).getAddressLine(0);
 
-                                        saveRecordToDB(mLastLocation, addressLine);
+                                        myAddress = addressLine;
+
+                                        //Toast.makeText(GameActivity.this, "got location: " + addressLine, Toast.LENGTH_SHORT).show();
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -390,26 +400,46 @@ public class GameActivity extends Activity {
                         }
                     });
         }
+
     }
 
-    private void saveRecordToDB(final LatLng mLastLocation, final String addressLine) {
+
+    private void saveRecordToDB() {
         db = new DBHandler(this);
         final int points = calculatePoints();
+        final String levelStr = getLevel();
+
+        if(mLastLocation == null)
+        {
+            mLastLocation = new LatLng(-1, -1);
+            myAddress = "No Location";
+        }
 
         new Runnable() {
             @Override
             public void run() {
-                db.addNewRecord(new Record(name, mLastLocation.latitude, mLastLocation.longitude, points, addressLine));
+                db.addNewRecord(new Record(name, mLastLocation.latitude, mLastLocation.longitude, points, myAddress, levelStr));
                 db.close();
-                Toast.makeText(GameActivity.this, "saved to db. location: " + addressLine, Toast.LENGTH_SHORT).show();
+                Toast.makeText(GameActivity.this, "record saved to db. points = " + points + " address: " + myAddress, Toast.LENGTH_LONG).show();
             }
         }.run();
     }
 
-    //endregion
+    private String getLevel() {
+        switch (level){
+            case 1: return "Easy";
+            case 2: return "Medium";
+            case 3: return "Hard";
+            default: return "Extreme";
+        }
+    }
 
     private int calculatePoints() {
         int secondsLeft = Integer.parseInt(timeTextView.getText().toString());
-        return secondsLeft * level + level;
+        return secondsLeft * level * level;
     }
+
+    //endregion
+
+
 }

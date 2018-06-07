@@ -30,6 +30,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_LONGITUDE = "longitude";
     private static final String KEY_POINTS = "points";
     private static final String KEY_ADDRESS = "address";
+    private static final String KEY_LEVEL = "level";
 
     public DBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -46,7 +47,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_LATITUDE + " REAL,"
                 + KEY_LONGITUDE + " REAL,"
                 + KEY_POINTS + " INTEGER,"
-                + KEY_ADDRESS + " TEXT " + ")";
+                + KEY_ADDRESS + " TEXT,"
+                + KEY_LEVEL + " TEXT " + ")";
 
         db.execSQL(CREATE_STUDENT_DETAIL_TABLE);
 
@@ -80,6 +82,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_LONGITUDE, newRec.getLocation().longitude);
         values.put(KEY_POINTS, newRec.getRecordPoints());
         values.put(KEY_ADDRESS, newRec.getAddress());
+        values.put(KEY_LEVEL, newRec.getLevel());
 
 
         // Inserting Row
@@ -97,11 +100,11 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public Record getRecord(int id){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_RECORD_DETAIL,new String[]{KEY_ID,KEY_NAME,KEY_LATITUDE,KEY_LONGITUDE, KEY_POINTS},KEY_ID+"=?",
+        Cursor cursor = db.query(TABLE_RECORD_DETAIL,new String[]{KEY_ID,KEY_NAME,KEY_LATITUDE,KEY_LONGITUDE, KEY_POINTS, KEY_LEVEL},KEY_ID+"=?",
                 new String[]{String.valueOf(id)},null,null,null,null);
         if(cursor != null)
             cursor.moveToFirst();
-        return new Record(cursor.getInt(0),cursor.getString(1),cursor.getDouble(2),cursor.getDouble(3),cursor.getInt(4),cursor.getString(5));
+        return new Record(cursor.getInt(0),cursor.getString(1),cursor.getDouble(2),cursor.getDouble(3),cursor.getInt(4),cursor.getString(5),cursor.getString(6));
 
     }
 
@@ -110,7 +113,7 @@ public class DBHandler extends SQLiteOpenHelper {
         List<Record> recordList = new ArrayList<>();
 
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_RECORD_DETAIL;
+        String selectQuery = "SELECT  * FROM " + TABLE_RECORD_DETAIL + " ORDER BY " + KEY_POINTS + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -126,6 +129,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 rec.setLongitude(Double.parseDouble(cursor.getString(3)));
                 rec.setRecordPoints(cursor.getInt(4));
                 rec.setAddress(cursor.getString(5));
+                rec.setLevel(cursor.getString(6));
 
                 // Adding contact to list
                 recordList.add(rec);
