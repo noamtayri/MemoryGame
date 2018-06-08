@@ -111,7 +111,7 @@ public class choose_level_Activity extends AppCompatActivity {
         }
         if(firstGame)
             firstGame = false;
-        else
+        else if(checkBox.isChecked())
             initLocation();
         intent.putExtra(FinalVariables.TIMER,checkBox.isChecked());
         intent.putExtra(FinalVariables.USER_NAME, userName);
