@@ -1,23 +1,18 @@
 package memorygame.com.memorygame.Model;
 
-import android.content.Context;
-
 import com.google.android.gms.maps.model.LatLng;
-
-import java.util.Calendar;
 
 public class Record {
     private int id, recordPoints;
     private String name, address, level;
     private double latitude, longitude;
 
-    //testing constructor
     public Record(){
 
     }
 
+    //constructor for game
     public Record(String name, double latitude, double longitude, int recordPoints, String address, String level) {
-
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -26,8 +21,8 @@ public class Record {
         this.level = level;
     }
 
+    //constructor for db
     public Record(int id, String name, double latitude, double longitude, int recordPoints, String address, String level) {
-
         this.id = id;
         this.name = name;
         this.latitude = latitude;

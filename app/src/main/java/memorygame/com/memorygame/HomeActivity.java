@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -37,12 +36,18 @@ public class HomeActivity extends AppCompatActivity {
         recordsBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this, RecordsActivity.class));
+                recordsBtn();
             }
         });
     }
 
-    private void nextBtn(){
+    private void recordsBtn() {
+        Intent intent = new Intent(this, RecordsActivity.class);
+        intent.putExtra(FinalVariables.LOCATION_PERM, locPermission);
+        startActivity(intent);
+    }
+
+    private void nextBtn() {
         EditText name = (EditText)findViewById(R.id.nameEditText);
         EditText age = (EditText)findViewById(R.id.ageEditText);
         if((name.getText().toString().equals(""))){

@@ -38,6 +38,7 @@ public class RecordsActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     public static DBHandler dbRecords;
+    public static boolean locPermission;
     public SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -52,6 +53,7 @@ public class RecordsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_records);
 
+        getData();
         dbRecords = new DBHandler(this);
 
         // Create the adapter that will return a fragment for each of the three
@@ -77,6 +79,11 @@ public class RecordsActivity extends AppCompatActivity {
             }
         });
         */
+    }
+
+    private void getData() {
+        Bundle data = getIntent().getExtras();
+        locPermission = data.getBoolean(FinalVariables.LOCATION_PERM, true);
     }
 
 

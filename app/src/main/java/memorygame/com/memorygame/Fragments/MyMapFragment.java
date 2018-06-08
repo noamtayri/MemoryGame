@@ -1,11 +1,11 @@
 package memorygame.com.memorygame.Fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -32,10 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
-import memorygame.com.memorygame.Dal.DBHandler;
 import memorygame.com.memorygame.FinalVariables;
-import memorygame.com.memorygame.GameActivity;
 import memorygame.com.memorygame.Model.Record;
 import memorygame.com.memorygame.R;
 import memorygame.com.memorygame.RecordsActivity;
@@ -71,7 +67,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
 
         recordsList = ((RecordsActivity)getActivity()).activityRecordsList;
 
-        //mMapView.onResume(); // needed to get the map to display immediately
+        mMapView.onResume(); // needed to get the map to display immediately
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -87,35 +83,12 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
     // endregion
 
     // region location Permission
+    @SuppressLint("MissingPermission")
     private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+        if(RecordsActivity.locPermission)
             mMap.setMyLocationEnabled(true);
-        } else {
-            requestPermissions(new String[]{
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-            }, FinalVariables.MY_LOCATION_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == FinalVariables.MY_LOCATION_REQUEST_CODE) {
-            if (permissions.length == 1 &&
-                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                {
-                    if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        mMap.setMyLocationEnabled(true);
-                    }
-                }
-            } else {
-                mMap.setMyLocationEnabled(false);
-                // Permission was denied. can't get user location.
-            }
-        }
+        else
+            mMap.setMyLocationEnabled(false);
     }
 
     //endregion
