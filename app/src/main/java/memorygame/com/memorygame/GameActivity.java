@@ -372,9 +372,11 @@ public class GameActivity extends Activity {
     private void getCurrentLocation() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(GameActivity.this);
         if (!locPermission){
+            Toast.makeText(GameActivity.this, "no permission", Toast.LENGTH_SHORT).show();
             return;
         }
         else{
+            Toast.makeText(GameActivity.this, "start gps listener", Toast.LENGTH_SHORT).show();
             mFusedLocationClient.getLastLocation().addOnSuccessListener(
                     new OnSuccessListener<Location>() {
                         @Override
@@ -389,7 +391,7 @@ public class GameActivity extends Activity {
 
                                         myAddress = addressLine;
 
-                                        //Toast.makeText(GameActivity.this, "got location: " + addressLine, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(GameActivity.this, "got location: " + addressLine, Toast.LENGTH_SHORT).show();
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
