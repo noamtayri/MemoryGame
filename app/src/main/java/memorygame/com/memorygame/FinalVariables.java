@@ -15,11 +15,12 @@ public class FinalVariables {
     public static final int REQUEST_CODE = 1;
 
     public static final String RESULT = "result";
+    public static final String RESULT_POINTS = "resultPoints";
 
     public static final String USER_NAME = "userName";
     public static final String USER_AGE = "userAge";
 
-    public static final int ROTATE_DIFF = 2;
+    public static final int ROTATE_DIFF = 3;
 
     public static final int MY_LOCATION_REQUEST_CODE = 2;
 

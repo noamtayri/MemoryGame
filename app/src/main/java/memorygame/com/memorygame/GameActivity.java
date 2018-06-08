@@ -11,9 +11,13 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -55,7 +59,7 @@ import tyrantgit.explosionfield.ExplosionField;
 public class GameActivity extends Activity {
 
     int level;
-    String name, myAddress;
+    String name;
     Boolean timer;
     int matrixSize;
     int btnAmount;
@@ -69,16 +73,12 @@ public class GameActivity extends Activity {
     List<Integer> imageList = new ArrayList<>();
     CountDownTimer countDown;
     int timerLimit;
-    Boolean winLose;
+    Boolean winLose = false;
     AccelerometerService as;
     public static Stack<MyBtn> matchesStack = new Stack<>();
     ExplosionField ex;
     final Animation animation = new RotateAnimation(0.0f,360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 
-    private boolean locPermission = false;
-    private LatLng mLastLocation;
-    private FusedLocationProviderClient mFusedLocationClient;
-    private DBHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +98,7 @@ public class GameActivity extends Activity {
 
         dealNewCards();
 
-        getCurrentLocation();
+        //initLocation();
 
         if(timer)
             timerLogic();
@@ -119,6 +119,17 @@ public class GameActivity extends Activity {
     protected void onStop(){
         super.onStop();
         unbindService(sc);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (corrects != btnAmount/2) {
+            if(timer)
+                countDown.cancel();
+            Intent resIntent = new Intent();
+            setResult(RESULT_CANCELED, resIntent);
+        }
     }
 
     private ServiceConnection sc = new ServiceConnection() {
@@ -195,7 +206,7 @@ public class GameActivity extends Activity {
         name = data.getString(FinalVariables.USER_NAME);
         timer = data.getBoolean(FinalVariables.TIMER);
         level = data.getInt(FinalVariables.LEVEL);
-        locPermission = data.getBoolean(FinalVariables.LOCATION_PERM);
+        //locPermission = data.getBoolean(FinalVariables.LOCATION_PERM);
         switch (level){
             case FinalVariables.EASY:
                 matrixSize = 2;
@@ -262,13 +273,13 @@ public class GameActivity extends Activity {
             for (MyBtn btn : allBtn) {
                 btn.btn.startAnimation(animation);
             }
-            if(timer) saveRecordToDB();
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     Intent resIntent = new Intent();
                     resIntent.putExtra(FinalVariables.RESULT, winLose);
+                    resIntent.putExtra(FinalVariables.RESULT_POINTS, calculatePoints());
                     setResult(RESULT_OK, resIntent);
                     finish();
                 }
@@ -367,79 +378,13 @@ public class GameActivity extends Activity {
         }
     }
 
-    //region Location and DB
-    @SuppressLint("MissingPermission")
-    private void getCurrentLocation() {
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(GameActivity.this);
-        if (!locPermission){
-            return;
-        }
-        else{
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(
-                    new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                                Geocoder geocoder = new Geocoder(GameActivity.this, Locale.getDefault());
-                                try {
-                                    List<Address> addressList = geocoder.getFromLocation(mLastLocation.latitude, mLastLocation.longitude, 1);
-                                    if (addressList.size() > 0) {
-                                        String addressLine = addressList.get(0).getAddressLine(0);
-
-                                        myAddress = addressLine;
-
-                                        //Toast.makeText(GameActivity.this, "got location: " + addressLine, Toast.LENGTH_SHORT).show();
-                                    }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                //mLocationTextView.setText(R.string.no_location);
-                            }
-                        }
-                    });
-        }
-
-    }
-
-
-    private void saveRecordToDB() {
-        db = new DBHandler(this);
-        final int points = calculatePoints();
-        final String levelStr = getLevel();
-
-        if(mLastLocation == null)
-        {
-            mLastLocation = new LatLng(-1, -1);
-            myAddress = "No Location";
-        }
-
-        new Runnable() {
-            @Override
-            public void run() {
-                db.addNewRecord(new Record(name, mLastLocation.latitude, mLastLocation.longitude, points, myAddress, levelStr));
-                db.close();
-                Toast.makeText(GameActivity.this, "record saved to db. points = " + points + " address: " + myAddress, Toast.LENGTH_LONG).show();
-            }
-        }.run();
-    }
-
-    private String getLevel() {
-        switch (level){
-            case 1: return "Easy";
-            case 2: return "Medium";
-            case 3: return "Hard";
-            default: return "Extreme";
-        }
-    }
 
     private int calculatePoints() {
+        if(!timer)
+            return -1;
         int secondsLeft = Integer.parseInt(timeTextView.getText().toString());
         return secondsLeft * level * level;
     }
-
-    //endregion
 
 
 }

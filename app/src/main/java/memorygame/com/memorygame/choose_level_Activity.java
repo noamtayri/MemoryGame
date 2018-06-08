@@ -1,17 +1,15 @@
 package memorygame.com.memorygame;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -31,6 +29,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import memorygame.com.memorygame.Dal.DBHandler;
+import memorygame.com.memorygame.Model.Record;
+
 public class choose_level_Activity extends AppCompatActivity {
 
     TextView welcomeTextView = null;
@@ -40,11 +41,18 @@ public class choose_level_Activity extends AppCompatActivity {
     Button playBtn = null;
     CheckBox checkBox;
     String userName;
-    String age;
+    String age, myAddress;
 
     private boolean locPermission = false;
     private LatLng mLastLocation;
+    private LocationManager locationManager;
+    private boolean gps_enabled = false, network_enabled = false;
+
+
     private FusedLocationProviderClient mFusedLocationClient;
+    private DBHandler db;
+    private LocationListener listener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,22 +61,21 @@ public class choose_level_Activity extends AppCompatActivity {
 
         bindUI();
 
-        //init();
-
         Bundle data = getIntent().getExtras();
         userName = data.getString(FinalVariables.USER_NAME);
         age = data.getString(FinalVariables.USER_AGE);
+        locPermission = data.getBoolean(FinalVariables.LOCATION_PERM, true);
+
+        initLocation();
+        init();
 
         TextView name = (TextView)findViewById(R.id.nameTextView);
         name.setText(userName + ", " + age);
 
-        String[] levels = {"easy","medium","hard"};
+        String[] levels = {"Easy","Medium","Hard"};
 
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, levels);
         spinner.setAdapter(adapter);
-
-        checkPermissions();
-        getCurrentLocation();
 
         Button play = (Button)findViewById(R.id.playButton);
         play.setOnClickListener(new View.OnClickListener(){
@@ -79,22 +86,28 @@ public class choose_level_Activity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        locationManager.removeUpdates(locationListenerGps);
+        locationManager.removeUpdates(locationListenerNetwork);
+    }
+
     private void playBtn(){
         Intent intent = new Intent(this, GameActivity.class);
         switch (spinner.getSelectedItem().toString()){
-            case "easy":
+            case "Easy":
                 intent.putExtra(FinalVariables.LEVEL,FinalVariables.EASY);
                 break;
-            case "medium":
+            case "Medium":
                 intent.putExtra(FinalVariables.LEVEL,FinalVariables.MEDIUM);
                 break;
-            case "hard":
+            case "Hard":
                 intent.putExtra(FinalVariables.LEVEL,FinalVariables.HARD);
                 break;
             default:
                 break;
         }
-        intent.putExtra(FinalVariables.LOCATION_PERM, locPermission);
         intent.putExtra(FinalVariables.TIMER,checkBox.isChecked());
         intent.putExtra(FinalVariables.USER_NAME, userName);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -135,49 +148,197 @@ public class choose_level_Activity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == FinalVariables.REQUEST_CODE && resultCode == RESULT_OK){
-            if(data.getBooleanExtra(FinalVariables.RESULT,true))
-                welcomeTextView.setText(R.string.win_msg);
-            else
-                welcomeTextView.setText(R.string.lose_msg);
+        if(requestCode == FinalVariables.REQUEST_CODE){
+            if(resultCode == RESULT_OK) {
+                if (data.getBooleanExtra(FinalVariables.RESULT, false)) {
+                    if (checkBox.isChecked()) {
+                        welcomeTextView.setText(R.string.win_msg);
+                        int points = data.getIntExtra(FinalVariables.RESULT_POINTS, 0);
+                        getLastLocationAndSave(points);
+                    }
+                }
+                else
+                    welcomeTextView.setText(R.string.lose_msg);
+            }
+            else if (resultCode == RESULT_CANCELED){
+                welcomeTextView.setText(R.string.cancel_msg);
+            }
         }else
             welcomeTextView.setText(R.string.welcome);
     }
 
-    // region Location and Permission
-    private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            locPermission = true;
-            init();
 
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-            }, FinalVariables.MY_LOCATION_REQUEST_CODE);
+    //region Location and DB
+
+
+    @SuppressLint("MissingPermission")
+    private void initLocation() {
+        if(!locPermission)
+            return;
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+
+
+        if (!gps_enabled && !network_enabled) {
+            Toast.makeText(getApplicationContext(), "can't find location", Toast.LENGTH_SHORT).show();
+            //startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
         }
+
+        if (gps_enabled)
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
+                    locationListenerGps);
+        if (!network_enabled)
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,
+                    locationListenerNetwork);
+        //timer=new Timer();
+        //timer.schedule(new GetLastLocation(), 20000);
+
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == FinalVariables.MY_LOCATION_REQUEST_CODE) {
-            if (permissions.length == 1 &&
-                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                {
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        locPermission  = true;
-                    }
+    LocationListener locationListenerGps = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            //timer.cancel();
+            mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            locationManager.removeUpdates(this);
+            locationManager.removeUpdates(locationListenerNetwork);
+
+            Toast.makeText(choose_level_Activity.this,
+                    "gps location (" + location.getLatitude() + ", " + location.getLongitude() + ")",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    };
+
+    LocationListener locationListenerNetwork = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            //timer.cancel();
+            if(mLastLocation == null)
+                mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            locationManager.removeUpdates(this);
+            locationManager.removeUpdates(locationListenerGps);
+
+            Toast.makeText(getApplicationContext(), "network location ("+ location.getLatitude() + ", " + location.getLongitude() + ")", Toast.LENGTH_SHORT).show();
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    };
+
+
+    @SuppressLint("MissingPermission")
+    private void getLastLocationAndSave(final int points) {
+        if(false){//locationManager == null) {
+            new Runnable(){
+
+                @Override
+                public void run() {
+                    mLastLocation = new LatLng(-1,-1);
+                    getAddress();
+                    saveRecordToDB(points);
                 }
-            } else {
-                locPermission = false;
-                // Permission was denied. can't get user location.
-            }
-            init();
+            }.run();
+        }
+        else {
+            locationManager.removeUpdates(locationListenerGps);
+            locationManager.removeUpdates(locationListenerNetwork);
+
+            new Runnable() {
+                @Override
+                public void run() {
+                    double x = -1, y = -1;
+
+                    Location net_loc = null, gps_loc = null;
+                    if (gps_enabled)
+                        gps_loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (network_enabled)
+                        net_loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                    //if there are both values use the latest one
+                    if (gps_loc != null && net_loc != null) {
+                        if (gps_loc.getTime() > net_loc.getTime()) {
+                            x = gps_loc.getLatitude();
+                            y = gps_loc.getLongitude();
+                            //Toast.makeText(getApplicationContext(), "gps last known " + x + "\n" + y, Toast.LENGTH_SHORT).show();
+                        } else {
+                            x = net_loc.getLatitude();
+                            y = net_loc.getLongitude();
+                            //Toast.makeText(getApplicationContext(), "network last known " + x + "\n" + y, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        if (net_loc != null) {
+                            {
+                                x = net_loc.getLatitude();
+                                y = net_loc.getLongitude();
+                                //Toast.makeText(getApplicationContext(), "network last known " + x + "\n" + y, Toast.LENGTH_SHORT).show();
+                            }
+                        } else if (gps_loc != null) {
+                            {
+                                x = gps_loc.getLatitude();
+                                y = gps_loc.getLongitude();
+                                //Toast.makeText(getApplicationContext(), "gps last known " + x + "\n" + y, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                    mLastLocation = new LatLng(x, y);
+                    getAddress();
+                    saveRecordToDB(points);
+                    //Context context = getApplicationContext();
+                    //Toast.makeText(context, "no last know available", Toast.LENGTH_SHORT).show();
+                }
+            }.run();
         }
     }
+
+    private void getAddress() {
+        if(mLastLocation.latitude == -1)
+            myAddress = "No Location";
+        else {
+            Geocoder geocoder = new Geocoder(choose_level_Activity.this, Locale.getDefault());
+            try {
+                List<Address> addressList = geocoder.getFromLocation(mLastLocation.latitude, mLastLocation.longitude, 1);
+                if (addressList.size() > 0) {
+                    String addressLine = addressList.get(0).getAddressLine(0);
+
+                    myAddress = addressLine;
+
+                    //Toast.makeText(GameActivity.this, "got location: " + addressLine, Toast.LENGTH_SHORT).show();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void saveRecordToDB(final int points) {
+        db = new DBHandler(this);
+        final String levelStr = spinner.getSelectedItem().toString();
+
+        db.addNewRecord(new Record(userName, mLastLocation.latitude, mLastLocation.longitude, points, myAddress, levelStr));
+        db.close();
+        Toast.makeText(choose_level_Activity.this, "saved to db. points = " + points + " address: " + myAddress, Toast.LENGTH_LONG).show();
+
+    }
+
+
 
     @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
@@ -198,7 +359,9 @@ public class choose_level_Activity extends AppCompatActivity {
                                     if (addressList.size() > 0) {
                                         String addressLine = addressList.get(0).getAddressLine(0);
 
-                                        //Toast.makeText(choose_level_Activity.this, "got location: " + addressLine, Toast.LENGTH_SHORT).show();
+                                        myAddress = addressLine;
+
+                                        //Toast.makeText(GameActivity.this, "got location: " + addressLine, Toast.LENGTH_SHORT).show();
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
