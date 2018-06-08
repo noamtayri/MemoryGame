@@ -52,6 +52,7 @@ public class choose_level_Activity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationClient;
     private DBHandler db;
     private LocationListener listener;
+    private boolean firstGame = true;
 
 
     @Override
@@ -108,6 +109,10 @@ public class choose_level_Activity extends AppCompatActivity {
             default:
                 break;
         }
+        if(firstGame)
+            firstGame = false;
+        else
+            initLocation();
         intent.putExtra(FinalVariables.TIMER,checkBox.isChecked());
         intent.putExtra(FinalVariables.USER_NAME, userName);
         startActivityForResult(intent, FinalVariables.REQUEST_CODE);
@@ -245,7 +250,7 @@ public class choose_level_Activity extends AppCompatActivity {
 
     @SuppressLint("MissingPermission")
     private void getLastLocationAndSave(final int points) {
-        if(false){//locationManager == null) {
+        if(locationManager == null) {
             new Runnable(){
 
                 @Override
@@ -301,7 +306,6 @@ public class choose_level_Activity extends AppCompatActivity {
                     mLastLocation = new LatLng(x, y);
                     getAddress();
                     saveRecordToDB(points);
-                    //Context context = getApplicationContext();
                     //Toast.makeText(context, "no last know available", Toast.LENGTH_SHORT).show();
                 }
             }.run();
@@ -335,43 +339,6 @@ public class choose_level_Activity extends AppCompatActivity {
         db.addNewRecord(new Record(userName, mLastLocation.latitude, mLastLocation.longitude, points, myAddress, levelStr));
         db.close();
         Toast.makeText(choose_level_Activity.this, "saved to db. points = " + points + " address: " + myAddress, Toast.LENGTH_LONG).show();
-
-    }
-
-
-
-    @SuppressLint("MissingPermission")
-    private void getCurrentLocation() {
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(choose_level_Activity.this);
-        if (!locPermission){
-            return;
-        }
-        else{
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(
-                    new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                mLastLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                                Geocoder geocoder = new Geocoder(choose_level_Activity.this, Locale.getDefault());
-                                try {
-                                    List<Address> addressList = geocoder.getFromLocation(mLastLocation.latitude, mLastLocation.longitude, 1);
-                                    if (addressList.size() > 0) {
-                                        String addressLine = addressList.get(0).getAddressLine(0);
-
-                                        myAddress = addressLine;
-
-                                        //Toast.makeText(GameActivity.this, "got location: " + addressLine, Toast.LENGTH_SHORT).show();
-                                    }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                //mLocationTextView.setText(R.string.no_location);
-                            }
-                        }
-                    });
-        }
 
     }
 
