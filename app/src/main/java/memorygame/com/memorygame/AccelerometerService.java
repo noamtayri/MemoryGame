@@ -28,7 +28,7 @@ public class AccelerometerService extends Service implements SensorEventListener
         sm = (SensorManager)getSystemService(SENSOR_SERVICE);
         sensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         //sm.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-        sm.registerListener(this, sensor, 5000000);
+        sm.registerListener(this, sensor, 500000);
         startPoints = null;
 
         return mBinder;
