@@ -186,7 +186,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback {
                                                 .position(mLastLocation)
                                                 .title("My Location")
                                                 .snippet(addressLine));
-                                        CameraPosition cameraPosition = new CameraPosition.Builder().target(mLastLocation).zoom(12).build();
+                                        CameraPosition cameraPosition = new CameraPosition.Builder().target(mLastLocation).zoom(14).build();
                                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
                                     }
